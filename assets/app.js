@@ -7,3 +7,13 @@
 
 // any CSS you import will output into a single css file (app.css in this case)
 import './styles/app.css';
+
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+import HelloWorld from './components/HelloWorld';
+
+const rootElement = document.getElementById('root');
+if (rootElement) {
+    const root = createRoot(rootElement);
+    root.render(<HelloWorld name="TypeScript" />);
+}
