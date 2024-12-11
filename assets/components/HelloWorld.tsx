@@ -5,7 +5,7 @@ type HelloWorldProps = {
 };
 
 const HelloWorld: React.FC<HelloWorldProps> = ({ name }) => {
-    return <h1 className="text-red-500">Hello, {name || "React with TypeScript"}!</h1>;
+    return <h1 className="text-green-500">Hello, {name || "React with TypeScript"}!</h1>;
 };
 
 export default HelloWorld;
