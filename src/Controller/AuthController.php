@@ -22,7 +22,9 @@ class AuthController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager,
         UserPasswordHasherInterface $passwordHasher,
-        ValidatorInterface $validator
+        ValidatorInterface $validator,
+        JWTTokenManagerInterface $jwtManager,
+        JwtCookieManager $jwtCookieManager
     ): JsonResponse {
         $data = json_decode($request->getContent(), true);
 
@@ -48,7 +50,14 @@ class AuthController extends AbstractController
         $entityManager->persist($user);
         $entityManager->flush();
 
-        return new JsonResponse(['message' => 'Inscription réussie !'], 201);
+        // Générer le JWT
+        $token = $jwtManager->create($user);
+
+        // Retourner le token dans un cookie sécurisé
+        $response = new JsonResponse(['message' => 'Inscription réussie !'], 201);
+        $response->headers->setCookie($jwtCookieManager->createCookie($token));
+
+        return $response;
     }
 
     #[Route('/api/login', name: 'api_login', methods: ['POST'])]
