@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class AuthController extends AbstractController
@@ -96,6 +97,7 @@ class AuthController extends AbstractController
     }
 
     #[Route('/api/logout', name: 'api_logout', methods: ['POST'])]
+    #[IsGranted('ROLE_USER')]
     public function logout(): JsonResponse
     {
         // Supprimer le cookie contenant le token
@@ -118,6 +120,7 @@ class AuthController extends AbstractController
     }
 
     #[Route('/api/user', name: 'api_user', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
     public function user(): JsonResponse
     {
         /** @var \App\Entity\User $user */
