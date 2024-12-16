@@ -1,0 +1,84 @@
+<?php
+
+namespace App\Controller;
+
+use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Cookie;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Routing\Attribute\Route;
+
+class AuthController extends AbstractController
+{
+    #[Route('/api/login', name: 'api_login', methods: ['POST'])]
+    public function login(
+        Request $request,
+        JWTTokenManagerInterface $jwtManager,
+        UserPasswordHasherInterface $passwordHasher,
+        EntityManagerInterface $entityManager
+    ): JsonResponse {
+        $data = json_decode($request->getContent(), true);
+
+        // Récupérer les identifiants
+        $email = $data['email'] ?? null;
+        $password = $data['password'] ?? null;
+
+        // Vérifier si l'utilisateur existe
+        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
+        if (!$user) {
+            return new JsonResponse(['error' => 'Email ou mot de passe incorrect.'], 401);
+        }
+
+        // Vérifier le mot de passe
+        if (!$passwordHasher->isPasswordValid($user, $password)) {
+            return new JsonResponse(['error' => 'Email ou mot de passe incorrect.'], 401);
+        }
+
+        // Générer le JWT
+        $token = $jwtManager->create($user);
+
+        // Retourner le token dans un cookie sécurisé
+        $response = new JsonResponse(['message' => 'Connexion réussie']);
+        $response->headers->setCookie(
+            new Cookie(
+                'TOKEN',         // Nom du cookie
+                $token,          // Contenu du cookie (le JWT)
+                time() + 3600,   // Expiration dans 1 heure
+                '/',             // Accessible sur toutes les routes
+                null,            // Domaine
+                true,            // Secure : HTTPS uniquement
+                true,            // HttpOnly : Inaccessible en JavaScript
+                false,           // Raw
+                'Strict'         // SameSite pour éviter les attaques CSRF
+            )
+        );
+
+        return $response;
+    }
+
+    #[Route('/api/logout', name: 'api_logout', methods: ['POST'])]
+    public function logout(): JsonResponse
+    {
+        // Supprimer le cookie contenant le token
+        $response = new JsonResponse(['message' => 'Déconnexion réussie'], 200);
+        $response->headers->setCookie(
+            new Cookie(
+                'TOKEN', // Nom du cookie
+                '', // Contenu vide
+                time() - 3600, // Date d'expiration dans le passé
+                '/', // Chemin
+                null, // Domaine
+                true, // Secure : HTTPS uniquement
+                true, // HttpOnly
+                false, // Raw
+                'Strict' // SameSite pour éviter les attaques CSRF
+            )
+        );
+
+        return $response;
+    }
+}
