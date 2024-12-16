@@ -116,4 +116,16 @@ class AuthController extends AbstractController
 
         return $response;
     }
+
+    #[Route('/api/user', name: 'api_user', methods: ['GET'])]
+    public function user(): JsonResponse
+    {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
+        return new JsonResponse([
+            'email' => $user->getEmail(),
+            'roles' => $user->getRoles(),
+        ]);
+    }
 }
