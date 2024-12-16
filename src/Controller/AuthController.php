@@ -80,7 +80,7 @@ class AuthController extends AbstractController
         $token = $jwtManager->create($user);
 
         // Retourner le token dans un cookie sécurisé
-        $response = new JsonResponse(['message' => 'Connexion réussie']);
+        $response = new JsonResponse(['message' => 'Connexion réussie'], 200);
         $response->headers->setCookie($jwtCookieManager->createCookie($token));
 
         return $response;
@@ -107,6 +107,6 @@ class AuthController extends AbstractController
         return new JsonResponse([
             'email' => $user->getEmail(),
             'roles' => $user->getRoles(),
-        ]);
+        ], 200);
     }
 }
