@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Service\JwtCookieManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -55,7 +56,8 @@ class AuthController extends AbstractController
         Request $request,
         JWTTokenManagerInterface $jwtManager,
         UserPasswordHasherInterface $passwordHasher,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        JwtCookieManager $jwtCookieManager
     ): JsonResponse {
         $data = json_decode($request->getContent(), true);
 
@@ -79,42 +81,18 @@ class AuthController extends AbstractController
 
         // Retourner le token dans un cookie sécurisé
         $response = new JsonResponse(['message' => 'Connexion réussie']);
-        $response->headers->setCookie(
-            new Cookie(
-                'TOKEN',         // Nom du cookie
-                $token,          // Contenu du cookie (le JWT)
-                time() + 3600,   // Expiration dans 1 heure
-                '/',             // Accessible sur toutes les routes
-                null,            // Domaine
-                true,            // Secure : HTTPS uniquement
-                true,            // HttpOnly : Inaccessible en JavaScript
-                false,           // Raw
-                'Strict'         // SameSite pour éviter les attaques CSRF
-            )
-        );
+        $response->headers->setCookie($jwtCookieManager->createCookie($token));
 
         return $response;
     }
 
     #[Route('/api/logout', name: 'api_logout', methods: ['POST'])]
     #[IsGranted('ROLE_USER')]
-    public function logout(): JsonResponse
+    public function logout(JwtCookieManager $jwtCookieManager): JsonResponse
     {
         // Supprimer le cookie contenant le token
         $response = new JsonResponse(['message' => 'Déconnexion réussie'], 200);
-        $response->headers->setCookie(
-            new Cookie(
-                'TOKEN', // Nom du cookie
-                '', // Contenu vide
-                time() - 3600, // Date d'expiration dans le passé
-                '/', // Chemin
-                null, // Domaine
-                true, // Secure : HTTPS uniquement
-                true, // HttpOnly
-                false, // Raw
-                'Strict' // SameSite pour éviter les attaques CSRF
-            )
-        );
+        $response->headers->setCookie($jwtCookieManager->deleteCookie());
 
         return $response;
     }
