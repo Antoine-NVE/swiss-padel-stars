@@ -15,5 +15,5 @@ import HelloWorld from "./components/HelloWorld";
 const rootElement = document.getElementById("root");
 if (rootElement) {
     const root = createRoot(rootElement);
-    root.render(<HelloWorld name="TypeScript" />);
+    root.render(<HelloWorld />);
 }
