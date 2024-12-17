@@ -14,16 +14,18 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
-        public:
-            pattern: ^/api/(login|register)
-            stateless: true
-            security: false
+        # public:
+        #     pattern: ^/api/(login|register)
+        #     stateless: true
+        #     security: false
 
         main:
             pattern: ^/api
             stateless: true
             provider: app_user_provider
-            jwt: ~
+            # jwt: ~
+            custom_authenticators:
+                - App\Security\JwtRefreshAuthenticator
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
