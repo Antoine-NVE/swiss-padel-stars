@@ -2,12 +2,14 @@
 
 namespace App\Controller;
 
+use App\Entity\RefreshToken;
 use App\Entity\User;
-use App\Service\JwtCookieManager;
+use App\Repository\RefreshTokenRepository;
+use App\Service\AccessTokenCookieManager;
+use App\Service\RefreshTokenCookieManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -24,7 +26,8 @@ class AuthController extends AbstractController
         UserPasswordHasherInterface $passwordHasher,
         ValidatorInterface $validator,
         JWTTokenManagerInterface $jwtManager,
-        JwtCookieManager $jwtCookieManager
+        AccessTokenCookieManager $accessTokenCookieManager,
+        RefreshTokenCookieManager $refreshTokenCookieManager
     ): JsonResponse {
         $data = json_decode($request->getContent(), true);
 
@@ -51,11 +54,20 @@ class AuthController extends AbstractController
         $entityManager->flush();
 
         // Générer le JWT
-        $token = $jwtManager->create($user);
+        $accessToken = $jwtManager->create($user);
+
+        $refreshToken = new RefreshToken();
+        $refreshToken->setToken(bin2hex(random_bytes(32)));
+        $refreshToken->setExpiresAt(new \DateTimeImmutable('+7 days'));
+        $refreshToken->setUser($user);
+
+        $entityManager->persist($refreshToken);
+        $entityManager->flush();
 
         // Retourner le token dans un cookie sécurisé
         $response = new JsonResponse(['message' => 'Inscription réussie !'], 201);
-        $response->headers->setCookie($jwtCookieManager->createCookie($token));
+        $response->headers->setCookie($accessTokenCookieManager->createCookie($accessToken));
+        $response->headers->setCookie($refreshTokenCookieManager->createCookie($refreshToken->getToken()));
 
         return $response;
     }
@@ -66,7 +78,8 @@ class AuthController extends AbstractController
         JWTTokenManagerInterface $jwtManager,
         UserPasswordHasherInterface $passwordHasher,
         EntityManagerInterface $entityManager,
-        JwtCookieManager $jwtCookieManager
+        AccessTokenCookieManager $accessTokenCookieManager,
+        RefreshTokenCookieManager $refreshTokenCookieManager
     ): JsonResponse {
         $data = json_decode($request->getContent(), true);
 
@@ -86,28 +99,52 @@ class AuthController extends AbstractController
         }
 
         // Générer le JWT
-        $token = $jwtManager->create($user);
+        $accessToken = $jwtManager->create($user);
+
+        $refreshToken = new RefreshToken();
+        $refreshToken->setToken(bin2hex(random_bytes(32)));
+        $refreshToken->setExpiresAt(new \DateTimeImmutable('+7 days'));
+        $refreshToken->setUser($user);
+
+        $entityManager->persist($refreshToken);
+        $entityManager->flush();
 
         // Retourner le token dans un cookie sécurisé
         $response = new JsonResponse(['message' => 'Connexion réussie'], 200);
-        $response->headers->setCookie($jwtCookieManager->createCookie($token));
+        $response->headers->setCookie($accessTokenCookieManager->createCookie($accessToken));
+        $response->headers->setCookie($refreshTokenCookieManager->createCookie($refreshToken->getToken()));
 
         return $response;
     }
 
     #[Route('/api/logout', name: 'api_logout', methods: ['POST'])]
     #[IsGranted('ROLE_USER')]
-    public function logout(JwtCookieManager $jwtCookieManager): JsonResponse
-    {
+    public function logout(
+        AccessTokenCookieManager $accessTokenCookieManager,
+        RefreshTokenCookieManager $refreshTokenCookieManager,
+        RefreshTokenRepository $refreshTokenRepository,
+        EntityManagerInterface $entityManager,
+        Request $request
+    ): JsonResponse {
+        // Récupérer le token de rafraîchissement dans le cookie
+        $refreshToken = $refreshTokenRepository->findOneBy(['token' => $request->cookies->get('REFRESH_TOKEN')]);
+
+        // Supprimer le token de rafraîchissement de la base de données
+        if ($refreshToken) {
+            $entityManager->remove($refreshToken);
+            $entityManager->flush();
+        }
+
         // Supprimer le cookie contenant le token
         $response = new JsonResponse(['message' => 'Déconnexion réussie'], 200);
-        $response->headers->setCookie($jwtCookieManager->deleteCookie());
+        $response->headers->setCookie($accessTokenCookieManager->deleteCookie());
+        $response->headers->setCookie($refreshTokenCookieManager->deleteCookie());
 
         return $response;
     }
 
     #[Route('/api/user', name: 'api_user', methods: ['GET'])]
-    #[IsGranted('ROLE_USER')]
+    #[IsGranted('ROLE_USER', null, 'Vous devez être connecté pour accéder à cette ressource.', 401)]
     public function user(): JsonResponse
     {
         /** @var \App\Entity\User $user */

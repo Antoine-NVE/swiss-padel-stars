@@ -4,12 +4,12 @@ namespace App\Service;
 
 use Symfony\Component\HttpFoundation\Cookie;
 
-class JwtCookieManager
+class RefreshTokenCookieManager
 {
-    public function createCookie(string $token, int $ttl = 3600): Cookie
+    public function createCookie(string $token, int $ttl = 3600 * 24 * 7): Cookie
     {
         return new Cookie(
-            'TOKEN',
+            'REFRESH_TOKEN',
             $token,
             time() + $ttl, // TTL positif pour créer, négatif pour supprimer
             '/',
