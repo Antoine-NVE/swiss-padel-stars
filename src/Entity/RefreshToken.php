@@ -21,9 +21,6 @@ class RefreshToken
     #[ORM\Column]
     private ?\DateTimeImmutable $expiresAt = null;
 
-    #[ORM\Column]
-    private ?bool $revoked = null;
-
     #[ORM\ManyToOne(inversedBy: 'refreshTokens')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
@@ -53,18 +50,6 @@ class RefreshToken
     public function setExpiresAt(\DateTimeImmutable $expiresAt): static
     {
         $this->expiresAt = $expiresAt;
-
-        return $this;
-    }
-
-    public function isRevoked(): ?bool
-    {
-        return $this->revoked;
-    }
-
-    public function setRevoked(bool $revoked): static
-    {
-        $this->revoked = $revoked;
 
         return $this;
     }

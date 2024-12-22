@@ -4,9 +4,9 @@ namespace App\Service;
 
 use Symfony\Component\HttpFoundation\Cookie;
 
-class JwtCookieManager
+class AccessTokenCookieManager
 {
-    public function createCookie(string $token, int $ttl = 3600): Cookie
+    public function createCookie(string $token, int $ttl = 10): Cookie
     {
         return new Cookie(
             'TOKEN',
