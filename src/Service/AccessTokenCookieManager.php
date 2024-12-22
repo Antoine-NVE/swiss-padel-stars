@@ -6,7 +6,7 @@ use Symfony\Component\HttpFoundation\Cookie;
 
 class AccessTokenCookieManager
 {
-    public function createCookie(string $token, int $ttl = 10): Cookie
+    public function createCookie(string $token, int $ttl = 3600): Cookie
     {
         return new Cookie(
             'TOKEN',
