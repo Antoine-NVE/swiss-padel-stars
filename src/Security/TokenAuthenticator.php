@@ -3,7 +3,6 @@
 namespace App\Security;
 
 use App\Entity\RefreshToken;
-use App\Entity\User;
 use App\Repository\RefreshTokenRepository;
 use App\Repository\UserRepository;
 use App\Response\StandardJsonResponse;
@@ -51,8 +50,7 @@ class TokenAuthenticator extends AbstractAuthenticator
             return false;
         }
 
-        // On veut authentifier les routes où l'utilisateur est connecté
-        return $request->cookies->has('TOKEN') || $request->cookies->has('REFRESH_TOKEN');
+        return true;
     }
 
     public function authenticate(Request $request): Passport
@@ -85,7 +83,7 @@ class TokenAuthenticator extends AbstractAuthenticator
         // Si l'access token est expiré, on tente de le renouveler avec le refresh token
         $refreshToken = $request->cookies->get('REFRESH_TOKEN');
         if (!$refreshToken) {
-            throw new AuthenticationException('Vous n\'êtes pas connecté.');
+            throw new AuthenticationException();
         }
 
         /** @var \App\Entity\RefreshToken $refreshTokenEntity */
@@ -94,7 +92,7 @@ class TokenAuthenticator extends AbstractAuthenticator
             // Si le refresh token est invalide, on le supprime
             $request->attributes->set('new_refresh_token_cookie', $this->refreshTokenCookieManager->deleteCookie());
 
-            throw new AuthenticationException('Vous n\'êtes pas connecté.');
+            throw new AuthenticationException();
         }
 
         $user = $refreshTokenEntity->getUser();
@@ -139,7 +137,7 @@ class TokenAuthenticator extends AbstractAuthenticator
             return null;
         }
 
-        return StandardJsonResponse::error($exception->getMessage(), null, 401);
+        return StandardJsonResponse::error('Vous n\'êtes pas connecté.', null, 401);
     }
 
     private function isExcludedRoute(Request $request, array $routes): bool
