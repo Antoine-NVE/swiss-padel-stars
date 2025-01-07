@@ -135,7 +135,9 @@ class TokenAuthenticator extends AbstractAuthenticator
         }
 
         return StandardJsonResponse::error('Vous n\'êtes pas connecté.', null, 401, [
-            'message' => $exception->getMessage()
+            'message' => $exception->getMessage(),
+            'file' => $exception->getFile(),
+            'line' => $exception->getLine(),
         ]);
     }
 
