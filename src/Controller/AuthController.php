@@ -90,12 +90,16 @@ class AuthController extends AbstractController
         // Vérifier si l'utilisateur existe
         $user = $entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
         if (!$user) {
-            return StandardJsonResponse::error('Email ou mot de passe incorrect.', null, 401);
+            return StandardJsonResponse::error('Email ou mot de passe incorrect.', null, 401, [
+                'message' => 'Email incorrect.'
+            ]);
         }
 
         // Vérifier le mot de passe
         if (!$passwordHasher->isPasswordValid($user, $password)) {
-            return StandardJsonResponse::error('Email ou mot de passe incorrect.', null, 401);
+            return StandardJsonResponse::error('Email ou mot de passe incorrect.', null, 401, [
+                'message' => 'Mot de passe incorrect.'
+            ]);
         }
 
         // Générer le JWT

@@ -83,16 +83,13 @@ class TokenAuthenticator extends AbstractAuthenticator
         // Si l'access token est expiré, on tente de le renouveler avec le refresh token
         $refreshToken = $request->cookies->get('REFRESH_TOKEN');
         if (!$refreshToken) {
-            throw new AuthenticationException();
+            throw new AuthenticationException('Refresh token manquant.');
         }
 
         /** @var \App\Entity\RefreshToken $refreshTokenEntity */
         $refreshTokenEntity = $this->refreshTokenRepository->findValidRefreshToken($refreshToken);
         if (!$refreshTokenEntity) {
-            // Si le refresh token est invalide, on le supprime
-            $request->attributes->set('new_refresh_token_cookie', $this->refreshTokenCookieManager->deleteCookie());
-
-            throw new AuthenticationException();
+            throw new AuthenticationException('Refresh token invalide.');
         }
 
         $user = $refreshTokenEntity->getUser();
@@ -137,7 +134,9 @@ class TokenAuthenticator extends AbstractAuthenticator
             return null;
         }
 
-        return StandardJsonResponse::error('Vous n\'êtes pas connecté.', null, 401);
+        return StandardJsonResponse::error('Vous n\'êtes pas connecté.', null, 401, [
+            'message' => $exception->getMessage()
+        ]);
     }
 
     private function isExcludedRoute(Request $request, array $routes): bool
