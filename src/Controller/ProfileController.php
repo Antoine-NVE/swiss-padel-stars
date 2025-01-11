@@ -2,17 +2,16 @@
 
 namespace App\Controller;
 
+use App\Response\StandardJsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class ProfileController extends AbstractController
 {
     #[Route('/api/profile', name: 'api_profile', methods: ['GET'])]
-    #[IsGranted('ROLE_USER')]
     public function index(): JsonResponse
     {
-        return new JsonResponse(['Profile page' => 'Hello World'], 200);
+        return StandardJsonResponse::success('Profile page', null, 200);
     }
 }

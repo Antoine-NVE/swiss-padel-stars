@@ -3,9 +3,9 @@
 namespace App\Security;
 
 use App\Entity\RefreshToken;
-use App\Entity\User;
 use App\Repository\RefreshTokenRepository;
 use App\Repository\UserRepository;
+use App\Response\StandardJsonResponse;
 use App\Service\AccessTokenCookieManager;
 use App\Service\RefreshTokenCookieManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -50,8 +50,7 @@ class TokenAuthenticator extends AbstractAuthenticator
             return false;
         }
 
-        // On veut authentifier les routes où l'utilisateur est connecté
-        return $request->cookies->has('TOKEN') || $request->cookies->has('REFRESH_TOKEN');
+        return true;
     }
 
     public function authenticate(Request $request): Passport
@@ -65,31 +64,32 @@ class TokenAuthenticator extends AbstractAuthenticator
 
                 // Vérifier si le token est expiré
                 if (!isset($data['exp']) || $data['exp'] < time()) {
-                    throw new AuthenticationException('Access token has expired.');
+                    throw new AuthenticationException();
                 }
 
                 $user = $this->getUserFromTokenData($data);
                 if (!$user) {
-                    throw new AuthenticationException('User not found');
+                    throw new AuthenticationException();
                 }
 
                 // Si l'access token est valide, on peut créer un SelfValidatingPassport
                 return new SelfValidatingPassport(new UserBadge($user->getUserIdentifier()), []);
             } catch (\Exception $e) {
-                throw new AuthenticationException('Invalid access token.');
+                // Si le token est invalide, on le supprime
+                $request->attributes->set('new_access_token_cookie', $this->accessTokenCookieManager->deleteCookie());
             }
         }
 
         // Si l'access token est expiré, on tente de le renouveler avec le refresh token
         $refreshToken = $request->cookies->get('REFRESH_TOKEN');
         if (!$refreshToken) {
-            throw new AuthenticationException('No refresh token provided.');
+            throw new AuthenticationException('Refresh token manquant.');
         }
 
         /** @var \App\Entity\RefreshToken $refreshTokenEntity */
         $refreshTokenEntity = $this->refreshTokenRepository->findValidRefreshToken($refreshToken);
         if (!$refreshTokenEntity) {
-            throw new AuthenticationException('Invalid or expired refresh token.');
+            throw new AuthenticationException('Refresh token invalide.');
         }
 
         $user = $refreshTokenEntity->getUser();
@@ -121,7 +121,7 @@ class TokenAuthenticator extends AbstractAuthenticator
 
         // On bloque l'accès aux routes inversées
         if ($this->isExcludedRoute($request, $this->inverseBehaviorRoutes)) {
-            return new JsonResponse(['error' => 'Already authenticated.'], 403);
+            return StandardJsonResponse::error('Vous êtes déjà connecté.', null, 403);
         }
 
         return null;
@@ -134,7 +134,11 @@ class TokenAuthenticator extends AbstractAuthenticator
             return null;
         }
 
-        return new JsonResponse(['error' => $exception->getMessage()], 401);
+        return StandardJsonResponse::error('Vous n\'êtes pas connecté.', null, 401, [
+            'message' => $exception->getMessage(),
+            'file' => $exception->getFile(),
+            'line' => $exception->getLine(),
+        ]);
     }
 
     private function isExcludedRoute(Request $request, array $routes): bool

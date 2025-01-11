@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\RefreshToken;
 use App\Entity\User;
 use App\Repository\RefreshTokenRepository;
+use App\Response\StandardJsonResponse;
 use App\Service\AccessTokenCookieManager;
 use App\Service\RefreshTokenCookieManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -14,7 +15,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class AuthController extends AbstractController
@@ -45,7 +45,7 @@ class AuthController extends AbstractController
             foreach ($errors as $error) {
                 $errorMessages[$error->getPropertyPath()] = $error->getMessage();
             }
-            return new JsonResponse(['errors' => $errorMessages], 400);
+            return StandardJsonResponse::error('Une erreur est survenue.', $errorMessages, 400);
         }
 
         $user->setPassword($passwordHasher->hashPassword($user, $password));
@@ -65,7 +65,7 @@ class AuthController extends AbstractController
         $entityManager->flush();
 
         // Retourner le token dans un cookie sécurisé
-        $response = new JsonResponse(['message' => 'Inscription réussie !'], 201);
+        $response = StandardJsonResponse::success('Inscription réussie !', null, 201);
         $response->headers->setCookie($accessTokenCookieManager->createCookie($accessToken));
         $response->headers->setCookie($refreshTokenCookieManager->createCookie($refreshToken->getToken()));
 
@@ -90,12 +90,16 @@ class AuthController extends AbstractController
         // Vérifier si l'utilisateur existe
         $user = $entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
         if (!$user) {
-            return new JsonResponse(['error' => 'Email ou mot de passe incorrect.'], 401);
+            return StandardJsonResponse::error('Email ou mot de passe incorrect.', null, 401, [
+                'message' => 'Email incorrect.'
+            ]);
         }
 
         // Vérifier le mot de passe
         if (!$passwordHasher->isPasswordValid($user, $password)) {
-            return new JsonResponse(['error' => 'Email ou mot de passe incorrect.'], 401);
+            return StandardJsonResponse::error('Email ou mot de passe incorrect.', null, 401, [
+                'message' => 'Mot de passe incorrect.'
+            ]);
         }
 
         // Générer le JWT
@@ -110,7 +114,7 @@ class AuthController extends AbstractController
         $entityManager->flush();
 
         // Retourner le token dans un cookie sécurisé
-        $response = new JsonResponse(['message' => 'Connexion réussie'], 200);
+        $response = StandardJsonResponse::success('Connexion réussie', null, 200);
         $response->headers->setCookie($accessTokenCookieManager->createCookie($accessToken));
         $response->headers->setCookie($refreshTokenCookieManager->createCookie($refreshToken->getToken()));
 
@@ -118,7 +122,6 @@ class AuthController extends AbstractController
     }
 
     #[Route('/api/logout', name: 'api_logout', methods: ['POST'])]
-    #[IsGranted('ROLE_USER')]
     public function logout(
         AccessTokenCookieManager $accessTokenCookieManager,
         RefreshTokenCookieManager $refreshTokenCookieManager,
@@ -136,7 +139,7 @@ class AuthController extends AbstractController
         }
 
         // Supprimer le cookie contenant le token
-        $response = new JsonResponse(['message' => 'Déconnexion réussie'], 200);
+        $response = StandardJsonResponse::success('Déconnexion réussie', null, 200);
         $response->headers->setCookie($accessTokenCookieManager->deleteCookie());
         $response->headers->setCookie($refreshTokenCookieManager->deleteCookie());
 
@@ -144,13 +147,12 @@ class AuthController extends AbstractController
     }
 
     #[Route('/api/user', name: 'api_user', methods: ['GET'])]
-    #[IsGranted('ROLE_USER', null, 'Vous devez être connecté pour accéder à cette ressource.', 401)]
     public function user(): JsonResponse
     {
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
 
-        return new JsonResponse([
+        return StandardJsonResponse::success('Utilisateur récupéré', [
             'email' => $user->getEmail(),
             'roles' => $user->getRoles(),
         ], 200);
