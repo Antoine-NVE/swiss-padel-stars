@@ -2,12 +2,9 @@
 
 namespace App\Controller;
 
-use App\Entity\RefreshToken;
 use App\Entity\User;
-use App\Repository\RefreshTokenRepository;
 use App\Response\StandardJsonResponse;
 use App\Service\AccessTokenCookieManager;
-use App\Service\RefreshTokenCookieManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -26,8 +23,7 @@ class AuthController extends AbstractController
         UserPasswordHasherInterface $passwordHasher,
         ValidatorInterface $validator,
         JWTTokenManagerInterface $jwtManager,
-        AccessTokenCookieManager $accessTokenCookieManager,
-        RefreshTokenCookieManager $refreshTokenCookieManager
+        AccessTokenCookieManager $accessTokenCookieManager
     ): JsonResponse {
         $data = json_decode($request->getContent(), true);
 
@@ -56,18 +52,9 @@ class AuthController extends AbstractController
         // Générer le JWT
         $accessToken = $jwtManager->create($user);
 
-        $refreshToken = new RefreshToken();
-        $refreshToken->setToken(bin2hex(random_bytes(32)));
-        $refreshToken->setExpiresAt(new \DateTimeImmutable('+7 days'));
-        $refreshToken->setUser($user);
-
-        $entityManager->persist($refreshToken);
-        $entityManager->flush();
-
         // Retourner le token dans un cookie sécurisé
         $response = StandardJsonResponse::success('Inscription réussie !', null, 201);
         $response->headers->setCookie($accessTokenCookieManager->createCookie($accessToken));
-        $response->headers->setCookie($refreshTokenCookieManager->createCookie($refreshToken->getToken()));
 
         return $response;
     }
@@ -83,24 +70,10 @@ class AuthController extends AbstractController
     #[Route('/api/logout', name: 'api_logout', methods: ['POST'])]
     public function logout(
         AccessTokenCookieManager $accessTokenCookieManager,
-        RefreshTokenCookieManager $refreshTokenCookieManager,
-        RefreshTokenRepository $refreshTokenRepository,
-        EntityManagerInterface $entityManager,
-        Request $request
     ): JsonResponse {
-        // Récupérer le token de rafraîchissement dans le cookie
-        $refreshToken = $refreshTokenRepository->findOneBy(['token' => $request->cookies->get('REFRESH_TOKEN')]);
-
-        // Supprimer le token de rafraîchissement de la base de données
-        if ($refreshToken) {
-            $entityManager->remove($refreshToken);
-            $entityManager->flush();
-        }
-
         // Supprimer le cookie contenant le token
         $response = StandardJsonResponse::success('Déconnexion réussie', null, 200);
         $response->headers->setCookie($accessTokenCookieManager->deleteCookie());
-        $response->headers->setCookie($refreshTokenCookieManager->deleteCookie());
 
         return $response;
     }

@@ -3,7 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -39,16 +38,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Length(min: 8)]
     private ?string $password = null;
 
-    /**
-     * @var Collection<int, RefreshToken>
-     */
-    #[ORM\OneToMany(targetEntity: RefreshToken::class, mappedBy: 'user', orphanRemoval: true)]
-    private Collection $refreshTokens;
-
-    public function __construct()
-    {
-        $this->refreshTokens = new ArrayCollection();
-    }
+    public function __construct() {}
 
     public function getId(): ?int
     {
@@ -123,35 +113,5 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
-    }
-
-    /**
-     * @return Collection<int, RefreshToken>
-     */
-    public function getRefreshTokens(): Collection
-    {
-        return $this->refreshTokens;
-    }
-
-    public function addRefreshToken(RefreshToken $refreshToken): static
-    {
-        if (!$this->refreshTokens->contains($refreshToken)) {
-            $this->refreshTokens->add($refreshToken);
-            $refreshToken->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeRefreshToken(RefreshToken $refreshToken): static
-    {
-        if ($this->refreshTokens->removeElement($refreshToken)) {
-            // set the owning side to null (unless already changed)
-            if ($refreshToken->getUser() === $this) {
-                $refreshToken->setUser(null);
-            }
-        }
-
-        return $this;
     }
 }
