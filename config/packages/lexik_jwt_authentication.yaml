@@ -6,7 +6,7 @@ lexik_jwt_authentication:
     token_extractors:
         cookie:
             enabled: true
-            name: TOKEN # Le nom de votre cookie
+            name: access_token
         authorization_header:
             enabled: false
         query_parameter:

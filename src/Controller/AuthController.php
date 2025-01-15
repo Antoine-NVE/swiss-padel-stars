@@ -5,8 +5,8 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Response\StandardJsonResponse;
 use App\Service\AccessTokenCookieManager;
+use App\Service\RefreshTokenCookieManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,8 +22,6 @@ class AuthController extends AbstractController
         EntityManagerInterface $entityManager,
         UserPasswordHasherInterface $passwordHasher,
         ValidatorInterface $validator,
-        JWTTokenManagerInterface $jwtManager,
-        AccessTokenCookieManager $accessTokenCookieManager
     ): JsonResponse {
         $data = json_decode($request->getContent(), true);
 
@@ -49,14 +47,7 @@ class AuthController extends AbstractController
         $entityManager->persist($user);
         $entityManager->flush();
 
-        // Générer le JWT
-        $accessToken = $jwtManager->create($user);
-
-        // Retourner le token dans un cookie sécurisé
-        $response = StandardJsonResponse::success('Inscription réussie !', null, 201);
-        $response->headers->setCookie($accessTokenCookieManager->createCookie($accessToken));
-
-        return $response;
+        return StandardJsonResponse::success('Inscription réussie !', null, 201);
     }
 
     #[Route('/api/login', name: 'api_login', methods: ['POST'])]
@@ -70,10 +61,12 @@ class AuthController extends AbstractController
     #[Route('/api/logout', name: 'api_logout', methods: ['POST'])]
     public function logout(
         AccessTokenCookieManager $accessTokenCookieManager,
+        RefreshTokenCookieManager $refreshTokenCookieManager
     ): JsonResponse {
         // Supprimer le cookie contenant le token
         $response = StandardJsonResponse::success('Déconnexion réussie', null, 200);
         $response->headers->setCookie($accessTokenCookieManager->deleteCookie());
+        $response->headers->setCookie($refreshTokenCookieManager->deleteCookie());
 
         return $response;
     }

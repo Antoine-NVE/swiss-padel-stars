@@ -14,29 +14,20 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
-        # public:
-        #     pattern: ^/api/(login|register)
-        #     stateless: true
-        #     security: false
-
-        login:
-            pattern: ^/api/login
+        api:
+            pattern: ^/api
             stateless: true
+            provider: app_user_provider
+            entry_point: jwt
             json_login:
                 check_path: /api/login
-                # success_handler: lexik_jwt_authentication.handler.authentication_success
                 success_handler: App\Security\CustomAuthenticationSuccessHandler
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
                 username_path: email
                 password_path: password
-
-        main:
-            pattern: ^/api
-            stateless: true
-            provider: app_user_provider
             jwt: ~
-            # custom_authenticators:
-            #     - App\Security\TokenAuthenticator
+            refresh_jwt:
+                check_path: /api/token/refresh
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
