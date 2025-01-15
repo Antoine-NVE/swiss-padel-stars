@@ -73,52 +73,11 @@ class AuthController extends AbstractController
     }
 
     #[Route('/api/login', name: 'api_login', methods: ['POST'])]
-    public function login(
-        Request $request,
-        JWTTokenManagerInterface $jwtManager,
-        UserPasswordHasherInterface $passwordHasher,
-        EntityManagerInterface $entityManager,
-        AccessTokenCookieManager $accessTokenCookieManager,
-        RefreshTokenCookieManager $refreshTokenCookieManager
-    ): JsonResponse {
-        $data = json_decode($request->getContent(), true);
-
-        // Récupérer les identifiants
-        $email = $data['email'] ?? null;
-        $password = $data['password'] ?? null;
-
-        // Vérifier si l'utilisateur existe
-        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
-        if (!$user) {
-            return StandardJsonResponse::error('Email ou mot de passe incorrect.', null, 401, [
-                'message' => 'Email incorrect.'
-            ]);
-        }
-
-        // Vérifier le mot de passe
-        if (!$passwordHasher->isPasswordValid($user, $password)) {
-            return StandardJsonResponse::error('Email ou mot de passe incorrect.', null, 401, [
-                'message' => 'Mot de passe incorrect.'
-            ]);
-        }
-
-        // Générer le JWT
-        $accessToken = $jwtManager->create($user);
-
-        $refreshToken = new RefreshToken();
-        $refreshToken->setToken(bin2hex(random_bytes(32)));
-        $refreshToken->setExpiresAt(new \DateTimeImmutable('+7 days'));
-        $refreshToken->setUser($user);
-
-        $entityManager->persist($refreshToken);
-        $entityManager->flush();
-
-        // Retourner le token dans un cookie sécurisé
-        $response = StandardJsonResponse::success('Connexion réussie', null, 200);
-        $response->headers->setCookie($accessTokenCookieManager->createCookie($accessToken));
-        $response->headers->setCookie($refreshTokenCookieManager->createCookie($refreshToken->getToken()));
-
-        return $response;
+    public function login(): void
+    {
+        // Cette méthode est gérée par LexikJWTAuthenticationBundle
+        // Voir la configuration dans config/packages/lexik_jwt_authentication.yaml
+        // et src/Security/CustomAuthenticationSuccessHandler.php
     }
 
     #[Route('/api/logout', name: 'api_logout', methods: ['POST'])]
