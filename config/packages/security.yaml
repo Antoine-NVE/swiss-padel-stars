@@ -22,7 +22,7 @@ security:
             json_login:
                 check_path: /api/auth/login
                 success_handler: App\Security\CustomAuthenticationSuccessHandler
-                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+                failure_handler: App\Security\CustomAuthenticationFailureHandler
                 username_path: email
                 password_path: password
             jwt: ~
