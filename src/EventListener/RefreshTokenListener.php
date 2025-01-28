@@ -25,7 +25,7 @@ class RefreshTokenListener
         $request = $event->getRequest();
 
         // Vérifiez si la requête est pour le rafraîchissement du token
-        if ($request->attributes->get('_route') === 'gesdinet_jwt_refresh_token') {
+        if ($request->attributes->get('_route') === 'api_auth_refresh') {
             $token = $this->tokenStorage->getToken();
 
             if ($token && $token->getUser()) {

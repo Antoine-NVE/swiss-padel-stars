@@ -20,14 +20,14 @@ security:
             provider: app_user_provider
             entry_point: jwt
             json_login:
-                check_path: /api/login
+                check_path: /api/auth/login
                 success_handler: App\Security\CustomAuthenticationSuccessHandler
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
                 username_path: email
                 password_path: password
             jwt: ~
             refresh_jwt:
-                check_path: /api/token/refresh
+                check_path: /api/auth/refresh
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall

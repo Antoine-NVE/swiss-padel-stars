@@ -14,9 +14,10 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
+#[Route('/api/auth', name: 'api_auth_')]
 class AuthController extends AbstractController
 {
-    #[Route('/api/register', name: 'api_register', methods: ['POST'])]
+    #[Route('/register', name: 'register', methods: ['POST'])]
     public function register(
         Request $request,
         EntityManagerInterface $entityManager,
@@ -50,15 +51,7 @@ class AuthController extends AbstractController
         return StandardJsonResponse::success('Inscription réussie !', null, 201);
     }
 
-    #[Route('/api/login', name: 'api_login', methods: ['POST'])]
-    public function login(): void
-    {
-        // Cette méthode est gérée par LexikJWTAuthenticationBundle
-        // Voir la configuration dans config/packages/lexik_jwt_authentication.yaml
-        // et src/Security/CustomAuthenticationSuccessHandler.php
-    }
-
-    #[Route('/api/logout', name: 'api_logout', methods: ['POST'])]
+    #[Route('/logout', name: 'logout', methods: ['POST'])]
     public function logout(
         AccessTokenCookieManager $accessTokenCookieManager,
         RefreshTokenCookieManager $refreshTokenCookieManager
@@ -69,17 +62,5 @@ class AuthController extends AbstractController
         $response->headers->setCookie($refreshTokenCookieManager->deleteCookie());
 
         return $response;
-    }
-
-    #[Route('/api/user', name: 'api_user', methods: ['GET'])]
-    public function user(): JsonResponse
-    {
-        /** @var \App\Entity\User $user */
-        $user = $this->getUser();
-
-        return StandardJsonResponse::success('Utilisateur récupéré', [
-            'email' => $user->getEmail(),
-            'roles' => $user->getRoles(),
-        ], 200);
     }
 }
