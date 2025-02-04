@@ -59,10 +59,6 @@ class JwtAuthenticator extends AbstractAuthenticator implements AuthenticationEn
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
-        if ($request->get('_route') === 'api_auth_refresh' && $request->cookies->has('refresh_token')) {
-            return null;
-        }
-
         return StandardJsonResponse::error('Échec de l\'authentification', null, 401, [
             'message' => $exception->getMessage(),
             'file' => $exception->getFile(),
