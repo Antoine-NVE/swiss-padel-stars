@@ -1,20 +1,44 @@
-import App from "./App.tsx";
-/*
- * Welcome to your app's main JavaScript file!
- *
- * We recommend including the built version of this JavaScript file
- * (and its CSS file) in your base layout (base.html.twig).
- */
-
-// any CSS you import will output into a single css file (app.css in this case)
+//@ts-check
+import Home from "./pages/index.tsx";
+import About from "./pages/about.tsx";
+import Layout from "./layout.tsx";
+import { BrowserRouter, Route, Routes } from "react-router";
 import "./styles/app.css";
-
 import React from "react";
 import { createRoot } from "react-dom/client";
-import HelloWorld from "./components/HelloWorld";
+
+const links = [
+    {
+        label: "Home",
+        href: "/",
+    },
+    {
+        label: "About",
+        href: "/about",
+    },
+];
 
 const rootElement = document.getElementById("root");
 if (rootElement) {
     const root = createRoot(rootElement);
-    root.render(<App />);
+    root.render(
+        <BrowserRouter>
+            <Routes>
+                <Route
+                    path="/"
+                    element={
+                        <Layout links={links}>
+                            <Home />
+                        </Layout>
+                    }></Route>
+                <Route
+                    path="/about"
+                    element={
+                        <Layout links={links}>
+                            <About />
+                        </Layout>
+                    }></Route>
+            </Routes>
+        </BrowserRouter>
+    );
 }
