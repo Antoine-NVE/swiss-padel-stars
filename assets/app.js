@@ -1,3 +1,4 @@
+import App from "./App.tsx";
 /*
  * Welcome to your app's main JavaScript file!
  *
@@ -15,5 +16,5 @@ import HelloWorld from "./components/HelloWorld";
 const rootElement = document.getElementById("root");
 if (rootElement) {
     const root = createRoot(rootElement);
-    root.render(<HelloWorld />);
+    root.render(<App />);
 }
