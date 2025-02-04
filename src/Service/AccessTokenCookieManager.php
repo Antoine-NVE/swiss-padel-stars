@@ -9,7 +9,7 @@ class AccessTokenCookieManager
     public function createCookie(string $token, int $ttl = 3600): Cookie
     {
         return new Cookie(
-            'TOKEN',
+            'access_token',
             $token,
             time() + $ttl, // TTL positif pour créer, négatif pour supprimer
             '/',

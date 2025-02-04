@@ -16,17 +16,6 @@ class RefreshTokenRepository extends ServiceEntityRepository
         parent::__construct($registry, RefreshToken::class);
     }
 
-    public function findValidRefreshToken(string $token): ?RefreshToken
-    {
-        return $this->createQueryBuilder('rt')
-            ->where('rt.token = :token')
-            ->andWhere('rt.expiresAt > :now')
-            ->setParameter('token', $token)
-            ->setParameter('now', new \DateTimeImmutable())
-            ->getQuery()
-            ->getOneOrNullResult();
-    }
-
     //    /**
     //     * @return RefreshToken[] Returns an array of RefreshToken objects
     //     */

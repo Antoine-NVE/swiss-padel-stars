@@ -4,10 +4,8 @@ namespace App\Entity;
 
 use App\Repository\RefreshTokenRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: RefreshTokenRepository::class)]
-#[UniqueEntity(fields: ['token'])]
 class RefreshToken
 {
     #[ORM\Id]
@@ -19,7 +17,7 @@ class RefreshToken
     private ?string $token = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $expiresAt = null;
+    private ?\DateTimeImmutable $expiration = null;
 
     #[ORM\ManyToOne(inversedBy: 'refreshTokens')]
     #[ORM\JoinColumn(nullable: false)]
@@ -42,14 +40,14 @@ class RefreshToken
         return $this;
     }
 
-    public function getExpiresAt(): ?\DateTimeImmutable
+    public function getExpiration(): ?\DateTimeImmutable
     {
-        return $this->expiresAt;
+        return $this->expiration;
     }
 
-    public function setExpiresAt(\DateTimeImmutable $expiresAt): static
+    public function setExpiration(\DateTimeImmutable $expiration): static
     {
-        $this->expiresAt = $expiresAt;
+        $this->expiration = $expiration;
 
         return $this;
     }
