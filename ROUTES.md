@@ -4,14 +4,14 @@ Ce fichier répertorie les différentes routes du projet, avec les méthodes HTT
 
 ## Liste des Routes
 
-| Nom               | Méthode | Chemin             | Description         | Rôle requis      |
-|-------------------|---------|--------------------|---------------------|------------------|
-| `api_register`    | POST    | `/api/register`    | Inscription         | Aucun            |
-| `api_login`       | POST    | `/api/login`       | Connexion           | Aucun            |
-| `api_logout`      | POST    | `/api/logout`      | Déconnexion         | ROLE_USER        |
-| `api_user`        | GET     | `/api/user`        | Détails utilisateur | ROLE_USER        |
-| `app_home`        | GET     | `/{reactRouting}`  | Accueil React       | Aucun            |
-| `api_profile`     | GET     | `/api/profile`     | Profil utilisateur  | ROLE_USER        |
+| Nom                | Méthode | Chemin               | Description          | Rôle requis  |
+|--------------------|---------|----------------------|----------------------|--------------|
+| `app_home`         | GET     | `/{reactRouting}`    | Accueil React        | Aucun        |
+| `api_auth_register`| POST    | `/api/auth/register` | Inscription          | Aucun        |
+| `api_auth_login`   | POST    | `/api/auth/login`    | Connexion            | Aucun        |
+| `api_auth_refresh` | POST    | `/api/auth/refresh`  | Refresh du token     | Aucun        |
+| `api_auth_logout`  | POST    | `/api/auth/logout`   | Déconnexion          | Aucun        |
+| `api_profile_user` | GET     | `/api/profile/user`  | Données utilisateur  | ROLE_USER    |
 
 ## Instructions
 
