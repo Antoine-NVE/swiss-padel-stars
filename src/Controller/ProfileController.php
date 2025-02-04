@@ -11,7 +11,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/api/profile', name: 'api_profile_')]
 class ProfileController extends AbstractController
 {
-    #[Route('/me', name: 'me', methods: ['GET'])]
+    #[Route('/user', name: 'user', methods: ['GET'])]
     #[IsGranted('ROLE_USER')]
     public function index(): JsonResponse
     {

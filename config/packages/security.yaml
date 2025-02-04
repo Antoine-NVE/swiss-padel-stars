@@ -8,7 +8,7 @@ security:
         app_user_provider:
             entity:
                 class: App\Entity\User
-                property: email
+                property: id
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -17,17 +17,7 @@ security:
         api:
             pattern: ^/api
             stateless: true
-            provider: app_user_provider
-            entry_point: jwt
-            json_login:
-                check_path: /api/auth/login
-                success_handler: App\Security\CustomAuthenticationSuccessHandler
-                failure_handler: App\Security\CustomAuthenticationFailureHandler
-                username_path: email
-                password_path: password
-            jwt: ~
-            refresh_jwt:
-                check_path: /api/auth/refresh
+            custom_authenticator: App\Security\JwtAuthenticator
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
@@ -38,14 +28,8 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # Routes accessibles sans authentification
-        # - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        # - { path: ^/api/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-
-        # Routes nécessitant une authentification ou un rôle spécifique
-        # - { path: ^/api/admin, roles: ROLE_ADMIN }
-        # - { path: ^/api/profile, roles: ROLE_USER }
-        # - { path: ^/api/user, roles: ROLE_USER }
+        # - { path: ^/admin, roles: ROLE_ADMIN }
+        # - { path: ^/profile, roles: ROLE_USER }
 
 when@test:
     security:

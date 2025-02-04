@@ -27,7 +27,3 @@ services:
             $kernelEnvironment: '%kernel.environment%'
         tags:
             - { name: kernel.event_subscriber }
-    
-    App\EventListener\RefreshTokenListener:
-        tags:
-            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
