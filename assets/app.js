@@ -16,6 +16,10 @@ const links = [
         label: "About",
         href: "/about",
     },
+    {
+        label: "Contact",
+        href: "/contact",
+    },
 ];
 
 const rootElement = document.getElementById("root");
@@ -24,20 +28,15 @@ if (rootElement) {
     root.render(
         <BrowserRouter>
             <Routes>
-                <Route
-                    path="/"
-                    element={
-                        <Layout links={links}>
-                            <Home />
-                        </Layout>
-                    }></Route>
-                <Route
-                    path="/about"
-                    element={
-                        <Layout links={links}>
-                            <About />
-                        </Layout>
-                    }></Route>
+                {links.map((link) => (
+                    <Route
+                        path={link.href}
+                        element={
+                            <Layout links={links}>
+                                <Home />
+                            </Layout>
+                        }></Route>
+                ))}
             </Routes>
         </BrowserRouter>
     );
