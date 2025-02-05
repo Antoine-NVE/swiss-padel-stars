@@ -49,23 +49,25 @@ const rootElement = document.getElementById("root");
 if (rootElement) {
     const root = createRoot(rootElement);
     root.render(
-        <BrowserRouter>
-            <Routes>
-                {links.map((link) => (
-                    <Route
-                        key={link.label}
-                        path={link.href}
-                        element={
-                            <Layout>
-                                <header className="absolute flex items-center justify-around w-screen bg-primary/90 py-4 px-4 bg-opacity-100 z-50">
-                                    <Nav links={links} />
-                                </header>
-                                <link.component />
-                            </Layout>
-                        }
-                    />
-                ))}
-            </Routes>
-        </BrowserRouter>
+        <React.StrictMode>
+            <BrowserRouter>
+                <Routes>
+                    {links.map((link) => (
+                        <Route
+                            key={link.label}
+                            path={link.href}
+                            element={
+                                <Layout>
+                                    <header className="absolute flex items-center justify-around w-screen bg-primary/90 py-4 px-4 z-50">
+                                        <Nav links={links} />
+                                    </header>
+                                    <link.component />
+                                </Layout>
+                            }
+                        />
+                    ))}
+                </Routes>
+            </BrowserRouter>
+        </React.StrictMode>
     );
 }
