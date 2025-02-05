@@ -53,10 +53,11 @@ if (rootElement) {
             <Routes>
                 {links.map((link) => (
                     <Route
+                        key={link.label}
                         path={link.href}
                         element={
                             <Layout>
-                                <header className="flex items-center justify-around w-screen bg-primary py-4 px-2 absolute">
+                                <header className="absolute flex items-center justify-around w-screen bg-primary/90 py-4 px-4 bg-opacity-100 z-50">
                                     <Nav links={links} />
                                 </header>
                                 <link.component />
