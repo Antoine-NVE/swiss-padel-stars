@@ -26,7 +26,7 @@ export default function Nav({ links }: { links: NavLink[] }) {
                     {links.map((link) => (
                         <div
                             key={link.label}
-                            className="grow text-secondary text-2xl hover:bg-primary/90 hover:[&_a]:underline p-2">
+                            className="grow text-secondary font-medium text-xl hover:bg-primary/90 hover:[&_a]:underline p-2">
                             <a href={link.href}>{link.label}</a>
                         </div>
                     ))}
@@ -93,6 +93,22 @@ export default function Nav({ links }: { links: NavLink[] }) {
                         <SubTitle>
                             <h3>Votre Panier</h3>
                         </SubTitle>
+                        <section className="flex flex-col gap-10">
+                            <CartProduct
+                                name="Raquette de padel ping-pong"
+                                quantity={1}
+                                price="60.00"
+                                unit="CHF"
+                                img={{ src: "build/images/raquette.png", alt: "une raquette de padel ping-pong" }}
+                            />
+                            <CartProduct
+                                name="Balles de padel ping-pong"
+                                quantity={2}
+                                price="30.00"
+                                unit="CHF"
+                                img={{ src: "build/images/balles.png", alt: "des balles blanches de padel ping-pong" }}
+                            />
+                        </section>
                     </Content>
                 </DropdownMenu>
                 <a href="/contact">
@@ -102,6 +118,60 @@ export default function Nav({ links }: { links: NavLink[] }) {
         </nav>
     );
 }
+
+const CartProduct = ({
+    name,
+    quantity,
+    price,
+    img,
+    unit,
+}: {
+    name: string;
+    quantity: number;
+    price: string;
+    img: { src: `build/images/${string}`; alt: string };
+    unit: string;
+}) => {
+    const { src, alt } = img;
+
+    return (
+        <article className="grid grid-cols-2 text-white gap-4 items-center">
+            <div>
+                <img src={src} alt={alt} />
+            </div>
+            <div className="h-full flex flex-col justify-evenly gap-2">
+                <header>
+                    <h4 className="text-secondary font-medium">{name}</h4>
+                    <p>
+                        {price}
+                        <span className="ms-2">{unit}</span>
+                    </p>
+                </header>
+                <div className="flex justify-between">
+                    <p>Quantité : </p>
+                    <p className="grow text-center">{quantity}</p>
+                    <Spacer />
+                </div>
+                <div className="flex items-center justify-center">
+                    <Button className="rounded-xl bg-primary/20 hover:bg-primary/30 mix-blend-plus-lighter rounded-r-none h-6">
+                        -
+                    </Button>
+                    <Button className="rounded-xl bg-primary/20 hover:bg-primary/30 mix-blend-plus-lighter rounded-l-none h-6">
+                        +
+                    </Button>
+                </div>
+                <footer className="flex items-center justify-evenly">
+                    <RadixButton className="underline" variant={"ghost"}>
+                        Supprimer
+                    </RadixButton>
+                    <RadixButton className="underline" variant={"ghost"}>
+                        Mettre de coté
+                    </RadixButton>
+                </footer>
+            </div>
+        </article>
+    );
+};
 
 const Content = ({ children, className }: { children: React.ReactNode; className?: string }) => {
     return (
@@ -151,17 +221,19 @@ const Box = ({ children, as }: { children: React.ReactNode; as: "form" | "div" }
     );
 };
 
-const Button = ({ children }: { children: React.ReactNode }) => {
+const Button = ({ children, className }: { children: React.ReactNode; className?: string }) => {
     return (
-        <RadixButton className="bg-dark-secondary text-white py-2 px-4 rounded-3xl w-fit" onClick={console.log}>
+        <RadixButton
+            className={cn("bg-dark-secondary text-white py-2 px-4 rounded-3xl w-fit", className)}
+            onClick={console.log}>
             {children}
         </RadixButton>
     );
 };
 
-const SubTitle = ({ children }: { children: React.ReactNode }) => {
+const SubTitle = ({ children, className }: { children: React.ReactNode; className?: string }) => {
     return (
-        <DropdownMenuLabel className="text-secondary text-2xl mb-3" asChild>
+        <DropdownMenuLabel className={cn("text-secondary text-2xl mb-3", className)} asChild>
             {children}
         </DropdownMenuLabel>
     );
