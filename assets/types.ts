@@ -35,7 +35,7 @@ export type NavLink = {
     href: string;
 };
 
-export type ImgProps = { src: `build/images/${string}`; alt: string };
+export type ImgProps = { src: `build/images/${string}` | string; alt: string; width: number; height: number };
 
 export type CartProductType = {
     name: string;
