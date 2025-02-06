@@ -35,10 +35,12 @@ export type NavLink = {
     href: string;
 };
 
+export type ImgProps = { src: `build/images/${string}`; alt: string };
+
 export type CartProductType = {
     name: string;
     quantity: number;
     price: string;
-    img: { src: `build/images/${string}`; alt: string };
+    img: ImgProps;
     unit: string;
 };
