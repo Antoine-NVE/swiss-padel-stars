@@ -6,42 +6,42 @@ import Infrastructure from "./pages/infrastructure.tsx";
 import Partenariat from "./pages/partenariat.tsx";
 import Produits from "./pages/produits.tsx";
 import Layout from "./layout.tsx";
+import Header from "./components/Header.tsx";
 import { BrowserRouter, Route, Routes } from "react-router";
 import "./styles/app.css";
 import React from "react";
 import { createRoot } from "react-dom/client";
-import Nav from "./components/Nav.tsx";
 
 const links = [
     {
         label: "Accueil",
-        href: "/",
-        component: Accueil,
+        href: "/", // chemin du routeur client
+        Page: Accueil, // rendu
     },
     {
         label: "Qui sommes-nous",
         href: "/nous",
-        component: Nous,
+        Page: Nous,
     },
     {
         label: "Contact",
         href: "/contact",
-        component: Contact,
+        Page: Contact,
     },
     {
         label: "Infrastructure",
         href: "/infrastructure",
-        component: Infrastructure,
+        Page: Infrastructure,
     },
     {
         label: "Partenariat et sponsoring",
         href: "/partenariat",
-        component: Partenariat,
+        Page: Partenariat,
     },
     {
         label: "Produits",
         href: "/produits",
-        component: Produits,
+        Page: Produits,
     },
 ];
 
@@ -52,20 +52,21 @@ if (rootElement) {
         <React.StrictMode>
             <BrowserRouter>
                 <Routes>
-                    {links.map((link) => (
-                        <Route
-                            key={link.label}
-                            path={link.href}
-                            element={
-                                <Layout>
-                                    <header className="absolute flex items-center justify-around w-screen bg-primary/90 py-4 px-4 z-50">
-                                        <Nav links={links} />
-                                    </header>
-                                    <link.component />
-                                </Layout>
-                            }
-                        />
-                    ))}
+                    {links.map((link) => {
+                        const { Page, href, label } = link;
+                        return (
+                            <Route
+                                key={label}
+                                path={href}
+                                element={
+                                    <Layout>
+                                        <Header links={links} />
+                                        <Page />
+                                    </Layout>
+                                }
+                            />
+                        );
+                    })}
                 </Routes>
             </BrowserRouter>
         </React.StrictMode>
