@@ -34,3 +34,24 @@ export type NavLink = {
     label: string;
     href: string;
 };
+
+export type ImgProps = { src: `build/images/${string}` | string; alt: string; width: number; height: number };
+
+export type CartProductType = {
+    name: string;
+    quantity: number;
+    price: string;
+    img: ImgProps;
+    unit: string;
+};
+
+export type FaqType = {
+    id: string;
+    question: string;
+    answer: string;
+};
+
+export type IconProps = {
+    width: number;
+    height: number;
+};

@@ -1,7 +1,8 @@
-import { MenuIcon, PlusIcon, ShoppingCart, UserIcon } from "lucide-react";
+import { MenuIcon, PlusIcon, ShoppingCartIcon, UserIcon } from "lucide-react";
 import React from "react";
-import type { NavLink } from "../types";
+import type { CartProductType, NavLink } from "../types";
 import { cn } from "../utils";
+import Logo from "./Logo";
 import { Button as RadixButton } from "./ui/button";
 import {
     DropdownMenu,
@@ -15,9 +16,18 @@ import Spacer from "./ui/spacer";
 
 const ICON_SIZE = 38;
 
-export default function Nav({ links }: { links: NavLink[] }) {
+// --
+// Le header ( Header ) est en 3 parties :
+// 1. La navigation ( Nav, contient logo qui est un lien )
+// 2. La section d'authentification ( AuthSection )
+// 3. La section du panier ( CartSection )
+
+/**
+ * Navigation
+ */
+const Nav = ({ links }: { links: NavLink[] }) => {
     return (
-        <nav className="w-full flex justify-between items-center">
+        <nav className="flex center w-1/2">
             <DropdownMenu>
                 <DropdownMenuTrigger>
                     <MenuIcon className="text-secondary" size={ICON_SIZE} />
@@ -33,112 +43,127 @@ export default function Nav({ links }: { links: NavLink[] }) {
                 </Content>
             </DropdownMenu>
             <Spacer />
-            {/* LOGO */}
-            <a href="/" className="py-2 px-3">
-                <img src="/build/images/logo.png" alt="Swiss Padel Stars" className="h-10" />
-            </a>
-            <Spacer />
-            <div className="inline-flex items-center gap-5">
-                <DropdownMenu>
-                    <DropdownMenuTrigger className="text-secondary">
-                        <UserIcon size={ICON_SIZE} />
-                    </DropdownMenuTrigger>
-                    <Content>
-                        <SubTitle>
-                            <h3>Connection</h3>
-                        </SubTitle>
-                        <Box as="form">
-                            <Input name="email" htmlFor="login-email" placeholder="Adresse email.." type="email" />
-                            <Input
-                                name="password"
-                                htmlFor="login-password"
-                                placeholder="Mot de passe.."
-                                type="password"
-                            />
-                            <Button>Validé</Button>
-                        </Box>
-                        <DropdownMenuSeparator />
-                        <SubTitle>
-                            <h3>Inscription</h3>
-                        </SubTitle>
-                        <Box as="form">
-                            <Input
-                                name="company"
-                                htmlFor="register-company"
-                                placeholder="Nom de l'entreprise.."
-                                type="text"
-                            />
-                            <Input name="email" htmlFor="register-email" placeholder="Adresse email.." type="email" />
-                            <Input
-                                name="password"
-                                htmlFor="register-password"
-                                placeholder="Mot de passe.."
-                                type="password"
-                            />
-                            <Input
-                                name="confirm-password"
-                                htmlFor="register-confirm-password"
-                                placeholder="Confirmer mot de passe.."
-                                type="password"
-                            />
-                            <Button>Validé</Button>
-                        </Box>
-                    </Content>
-                </DropdownMenu>
-                <DropdownMenu>
-                    <DropdownMenuTrigger className="text-secondary">
-                        <ShoppingCart size={ICON_SIZE} />
-                    </DropdownMenuTrigger>
-                    <Content>
-                        <SubTitle>
-                            <h3>Votre Panier</h3>
-                        </SubTitle>
-                        <section className="flex flex-col gap-10">
-                            <CartProduct
-                                name="Raquette de padel ping-pong"
-                                quantity={1}
-                                price="60.00"
-                                unit="CHF"
-                                img={{ src: "build/images/raquette.png", alt: "une raquette de padel ping-pong" }}
-                            />
-                            <CartProduct
-                                name="Balles de padel ping-pong"
-                                quantity={2}
-                                price="30.00"
-                                unit="CHF"
-                                img={{ src: "build/images/balles.png", alt: "des balles blanches de padel ping-pong" }}
-                            />
-                        </section>
-                    </Content>
-                </DropdownMenu>
-                <a href="/contact">
-                    <Button>Contact</Button>
-                </a>
-            </div>
+            <Logo className="translate-x-[100%]" />
         </nav>
+    );
+};
+
+/**
+ * Auth forms
+ */
+const AuthSection = ({ Icon }: { Icon: React.ReactNode }) => {
+    return (
+        <DropdownMenu>
+            <DropdownMenuTrigger className="text-secondary">{Icon}</DropdownMenuTrigger>
+            <Content>
+                <SubTitle>
+                    <h3>Connection</h3>
+                </SubTitle>
+                <Box as="form">
+                    <Input name="email" htmlFor="login-email" placeholder="Adresse email.." type="email" />
+                    <Input name="password" htmlFor="login-password" placeholder="Mot de passe.." type="password" />
+                    <Button>Validé</Button>
+                </Box>
+                <DropdownMenuSeparator />
+                <SubTitle>
+                    <h3>Inscription</h3>
+                </SubTitle>
+                <Box as="form">
+                    <Input name="company" htmlFor="register-company" placeholder="Nom de l'entreprise.." type="text" />
+                    <Input name="email" htmlFor="register-email" placeholder="Adresse email.." type="email" />
+                    <Input name="password" htmlFor="register-password" placeholder="Mot de passe.." type="password" />
+                    <Input
+                        name="confirm-password"
+                        htmlFor="register-confirm-password"
+                        placeholder="Confirmer mot de passe.."
+                        type="password"
+                    />
+                    <Button>Validé</Button>
+                </Box>
+            </Content>
+        </DropdownMenu>
+    );
+};
+
+/**
+ * Cart section with lorem products
+ */
+const CartSection = ({ title, Icon }: { title: string; Icon: React.ReactNode }) => {
+    const products: CartProductType[] = [
+        {
+            name: "Raquette de padel ping-pong",
+            quantity: 1,
+            price: "60.00",
+            unit: "CHF",
+            img: { src: "build/images/raquette.png", alt: "une raquette de padel ping-pong", width: 200, height: 180 },
+        },
+        {
+            name: "Balles de padel ping-pong",
+            quantity: 2,
+            price: "30.00",
+            unit: "CHF",
+            img: {
+                src: "build/images/balles.png",
+                alt: "des balles blanches de padel ping-pong",
+                width: 200,
+                height: 180,
+            },
+        },
+    ];
+    // ShoppingCart
+    return (
+        <DropdownMenu>
+            <DropdownMenuTrigger className="text-secondary">{Icon}</DropdownMenuTrigger>
+            <Content>
+                <SubTitle>
+                    <h3>{title}</h3>
+                </SubTitle>
+                <section className="flex flex-col gap-10">
+                    {products.map((product) => (
+                        <CartProduct
+                            name={product.name}
+                            quantity={product.quantity}
+                            price={product.price}
+                            img={product.img}
+                            unit={product.unit}
+                        />
+                    ))}
+                </section>
+            </Content>
+        </DropdownMenu>
+    );
+};
+
+/**
+ * MAIN COMPONENT HEADER
+ */
+export default function Header({ links }: { links: NavLink[] }) {
+    return (
+        <header className="absolute flex items-center justify-around w-screen bg-primary/90 py-4 px-4 z-50 h-24">
+            <div className="w-full flex justify-between items-center">
+                <Nav links={links} />
+                <Spacer />
+                <section className="inline-flex items-center justify-end w-1/2 gap-5">
+                    <AuthSection Icon={<UserIcon size={ICON_SIZE} />} />
+                    <CartSection title="Votre panier" Icon={<ShoppingCartIcon size={ICON_SIZE} />} />
+                    <a href="/contact">
+                        <Button>Contact</Button>
+                    </a>
+                </section>
+            </div>
+        </header>
     );
 }
 
-const CartProduct = ({
-    name,
-    quantity,
-    price,
-    img,
-    unit,
-}: {
-    name: string;
-    quantity: number;
-    price: string;
-    img: { src: `build/images/${string}`; alt: string };
-    unit: string;
-}) => {
+/**
+ * Styled components ( secondary UI components )
+ */
+const CartProduct = ({ name, quantity, price, img, unit }: CartProductType) => {
     const { src, alt } = img;
 
     return (
         <article className="grid grid-cols-2 text-white gap-4 items-center">
-            <div>
-                <img src={src} alt={alt} />
-            </div>
+            <img src={src} alt={alt} />
             <div className="h-full flex flex-col justify-evenly gap-2">
                 <header>
                     <h4 className="text-secondary font-medium">{name}</h4>
