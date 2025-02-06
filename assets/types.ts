@@ -50,3 +50,8 @@ export type FaqType = {
     question: string;
     answer: string;
 };
+
+export type IconProps = {
+    width: number;
+    height: number;
+};
