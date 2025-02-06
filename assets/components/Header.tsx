@@ -43,7 +43,7 @@ const Nav = ({ links }: { links: NavLink[] }) => {
                 </Content>
             </DropdownMenu>
             <Spacer />
-            <Logo src="/build/images/logo.png" />
+            <Logo className="translate-x-[100%]" />
         </nav>
     );
 };
