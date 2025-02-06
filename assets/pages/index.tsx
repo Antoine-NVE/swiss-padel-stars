@@ -3,17 +3,22 @@ import { Button as RadixButton } from "../components/ui/button";
 import { type ImgProps } from "../types";
 import { cn } from "../utils";
 
-const Article = ({
-    img,
-    text,
-    direction,
-    btnText,
-}: {
-    img: ImgProps;
+type ArticleProps = {
+    img: ImgProps | ImgProps[];
     text: string;
     direction?: "rtl" | "ltr";
     btnText: string;
-}) => {
+};
+
+/**
+ * Un article est un element indépendant image + texte + bouton
+ * la propriété direction permet de spécifier l'ordre de présentation
+ */
+const Article = ({ img, text, direction, btnText }: ArticleProps) => {
+    if (Array.isArray(img) && img.length > 2) {
+        throw new Error("More than 2 images is not implemented yet !");
+    }
+
     return (
         <article
             className={cn(
@@ -21,7 +26,7 @@ const Article = ({
                 direction === "ltr" && "flex-row-reverse"
             )}>
             <div className="wrapper">
-                <img src={img.src} alt={img.alt} width={500} height={400} className="object-cover rounded-lg" />
+                <ArticleImage img={img} />
             </div>
             <div className="wrapper flex flex-col items-center justify-around">
                 <p className="text-white text-3xl text-balance text-justify">{text}</p>
@@ -31,6 +36,32 @@ const Article = ({
     );
 };
 
+/**
+ * S'il y a deux images, elles sont affichées chevauchante comme le spécifie le figma
+ * sinon, une seule image est affichée
+ */
+const ArticleImage = ({ img }: { img: ImgProps | ImgProps[] }) => {
+    if (Array.isArray(img)) {
+        if (img.length > 2) throw new Error("More than 2 images is not implemented yet!");
+
+        return (
+            <div className="relative" style={{ height: img[0].height * 2 + "px" }}>
+                <div className="absolute top-10 right-16 z-0">
+                    <img {...img[0]} className="aspect-square object-cover rounded-xl" />
+                </div>
+                <div className="absolute bottom-10 left-16 z-10 ring-[10px] ring-dark-primary rounded-xl">
+                    <img {...img[1]} className="aspect-square object-cover rounded-xl" />
+                </div>
+            </div>
+        );
+    }
+
+    return <img {...img} className="object-cover rounded-xl" />;
+};
+
+/**
+ * Hero / banniere
+ */
 const Hero = () => {
     return (
         <div className="relative">
@@ -43,16 +74,25 @@ const Hero = () => {
 };
 
 export default function Page() {
-    const articles: { img: ImgProps; text: string; btnText: string }[] = [
+    // articles à afficher
+    const articles: { img: ImgProps | ImgProps[]; text: string; btnText: string }[] = [
         {
-            img: { src: "build/images/body-img-home-1.png", alt: "" },
+            img: { src: "build/images/body-img-home-1.png", alt: "", width: 500, height: 400 },
             text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip.",
             btnText: "Ghost",
         },
         {
-            img: { src: "build/images/body-img-home-2.png", alt: "" },
+            img: { src: "build/images/body-img-home-2.png", alt: "", width: 500, height: 400 },
             text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip.",
             btnText: "Contact",
+        },
+        {
+            img: [
+                { src: "https://picsum.photos/220/220", alt: "", width: 220, height: 220 }, // build/images/body-img-home-small-1.png
+                { src: "https://picsum.photos/220/220", alt: "", width: 220, height: 220 }, // build/images/body-img-home-small-2.png
+            ],
+            text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip.",
+            btnText: "Commander un devis",
         },
     ];
 
