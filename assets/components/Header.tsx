@@ -95,7 +95,7 @@ const CartSection = ({ title, Icon }: { title: string; Icon: React.ReactNode }) 
             quantity: 1,
             price: "60.00",
             unit: "CHF",
-            img: { src: "build/images/raquette.png", alt: "une raquette de padel ping-pong" },
+            img: { src: "build/images/raquette.png", alt: "une raquette de padel ping-pong", width: 200, height: 180 },
         },
         {
             name: "Balles de padel ping-pong",
@@ -105,6 +105,8 @@ const CartSection = ({ title, Icon }: { title: string; Icon: React.ReactNode }) 
             img: {
                 src: "build/images/balles.png",
                 alt: "des balles blanches de padel ping-pong",
+                width: 200,
+                height: 180,
             },
         },
     ];
@@ -161,9 +163,7 @@ const CartProduct = ({ name, quantity, price, img, unit }: CartProductType) => {
 
     return (
         <article className="grid grid-cols-2 text-white gap-4 items-center">
-            <div>
-                <img src={src} alt={alt} />
-            </div>
+            <img src={src} alt={alt} />
             <div className="h-full flex flex-col justify-evenly gap-2">
                 <header>
                     <h4 className="text-secondary font-medium">{name}</h4>
