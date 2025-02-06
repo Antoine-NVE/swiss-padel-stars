@@ -44,3 +44,9 @@ export type CartProductType = {
     img: ImgProps;
     unit: string;
 };
+
+export type FaqType = {
+    id: string;
+    question: string;
+    answer: string;
+};
