@@ -3,7 +3,7 @@ import { Button as RadixButton } from "../components/ui/button";
 import { type ImgProps } from "../types";
 import { cn } from "../utils";
 
-const Article = ({ img, text }: { img: ImgProps; text: string }) => {
+const Article = ({ img, text, direction }: { img: ImgProps; text: string; direction: "rtl" | "ltr" }) => {
     return (
         <article className="flex center justify-around [&_.wrapper]:w-[500px]">
             <div className="wrapper">
@@ -14,6 +14,17 @@ const Article = ({ img, text }: { img: ImgProps; text: string }) => {
                 <Button className="w-fit">Ghost</Button>
             </div>
         </article>
+    );
+};
+
+const Hero = () => {
+    return (
+        <div className="relative">
+            <img src="/build/images/hero-home.png" alt="" className="object-cover w-screen" />
+            <h1 className="absolute top-1/2 right-1/2 text-secondary text-6xl font-bold translate-x-[50%] -translate-y-[50%]">
+                Swiss Padel Stars
+            </h1>
+        </div>
     );
 };
 
@@ -31,16 +42,12 @@ export default function Page() {
 
     return (
         <div className="grow bg-dark-primary space-y-10">
-            <div className="relative">
-                <img src="/build/images/hero-home.png" alt="" className="object-cover w-screen" />
-                <h1 className="absolute top-1/2 right-1/2 text-secondary text-6xl font-bold translate-x-[50%] -translate-y-[50%]">
-                    Swiss Padel Stars
-                </h1>
-            </div>
+            <Hero />
             <section className="space-y-10 w-full">
-                {articles.map((article, index) => (
-                    <Article key={index} img={article.img} text={article.text} />
-                ))}
+                {articles.map((article, index) => {
+                    const dir = index % 2 === 0 ? "rtl" : "ltr";
+                    return <Article direction={dir} key={index} img={article.img} text={article.text} />;
+                })}
             </section>
         </div>
     );
