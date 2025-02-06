@@ -17,28 +17,35 @@ const ICON_SIZE = 38;
 
 export default function Nav({ links }: { links: NavLink[] }) {
     return (
-        <nav className="w-full flex justify-between items-center">
-            <DropdownMenu>
-                <DropdownMenuTrigger>
-                    <MenuIcon className="text-secondary" size={ICON_SIZE} />
-                </DropdownMenuTrigger>
-                <Content className="min-h-[500px]">
-                    {links.map((link) => (
-                        <div
-                            key={link.label}
-                            className="grow text-secondary font-medium text-xl hover:bg-primary/90 hover:[&_a]:underline p-2">
-                            <a href={link.href}>{link.label}</a>
-                        </div>
-                    ))}
-                </Content>
-            </DropdownMenu>
+        <div className="w-full flex justify-between items-center">
+            <nav className="flex center w-1/2">
+                <DropdownMenu>
+                    <DropdownMenuTrigger>
+                        <MenuIcon className="text-secondary" size={ICON_SIZE} />
+                    </DropdownMenuTrigger>
+                    <Content className="min-h-[500px]">
+                        {links.map((link) => (
+                            <div
+                                key={link.label}
+                                className="grow text-secondary font-medium text-xl hover:bg-primary/90 hover:[&_a]:underline p-2">
+                                <a href={link.href}>{link.label}</a>
+                            </div>
+                        ))}
+                    </Content>
+                </DropdownMenu>
+                <Spacer />
+                {/* LOGO */}
+                <a href="/" aria-label="go to main page">
+                    <img
+                        src="/build/images/logo.png"
+                        alt="Swiss Padel Stars logo"
+                        className="h-10 translate-x-[100%]"
+                    />
+                </a>
+            </nav>
+
             <Spacer />
-            {/* LOGO */}
-            <a href="/" className="py-2 px-3">
-                <img src="/build/images/logo.png" alt="Swiss Padel Stars" className="h-10" />
-            </a>
-            <Spacer />
-            <div className="inline-flex items-center gap-5">
+            <section className="inline-flex items-center justify-end w-1/2 gap-5">
                 <DropdownMenu>
                     <DropdownMenuTrigger className="text-secondary">
                         <UserIcon size={ICON_SIZE} />
@@ -114,8 +121,8 @@ export default function Nav({ links }: { links: NavLink[] }) {
                 <a href="/contact">
                     <Button>Contact</Button>
                 </a>
-            </div>
-        </nav>
+            </section>
+        </div>
     );
 }
 
