@@ -87,10 +87,7 @@ export default function Page() {
                             )
                         }
                     </CarouselContent>
-                    <CarouselPrevious
-                        className="text-secondary scale-[3] translate-x-[100%] translate"
-                        variant={"ghost"}
-                    />
+                    <CarouselPrevious className="text-secondary scale-[3] translate-x-[100%]" variant={"ghost"} />
                     <CarouselNext className="text-secondary scale-[3] -translate-x-[100%]" variant={"ghost"} />
                 </Carousel>
             </section>
