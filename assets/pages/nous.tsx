@@ -2,6 +2,7 @@ import React from "react";
 import { Article } from "../components/Article";
 import CommunFaq from "../components/CommunFaq";
 import { Hero } from "../components/Hero";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../components/ui/carousel";
 import { type ImgProps } from "../types";
 
 export default function Page() {
@@ -14,6 +15,24 @@ export default function Page() {
         {
             img: { src: "build/images/nous-body-img-1.png", alt: "", width: 500, height: 400 },
             text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip.",
+        },
+    ];
+
+    const carousel = [
+        {
+            img: { src: "build/images/carousel-1.png", alt: "element 1 from the carousel", width: 325, height: 325 },
+            link: "/",
+            label: "Element 1",
+        },
+        {
+            img: { src: "build/images/carousel-2.png", alt: "element 2 from the carousel", width: 325, height: 325 },
+            link: "/",
+            label: "Element 2",
+        },
+        {
+            img: { src: "build/images/carousel-3.png", alt: "element 3 from the carousel", width: 325, height: 325 },
+            link: "/",
+            label: "Element 3",
         },
     ];
 
@@ -48,6 +67,32 @@ export default function Page() {
                         consectetur adipisicing elit.
                     </p>
                 </div>
+            </section>
+            <section className="flex flex-col items-center justify-center gap-10">
+                <h3 className="text-3xl text-secondary font-semibold">Evenement Blog</h3>
+                <Carousel opts={{ align: "start", loop: true, startIndex: 1 }} className="max-w-5xl">
+                    <CarouselContent>
+                        {
+                            /* on loop bêtement 2 fois sur carousel pour avoir plus d'élément */ [1, 2].map(() =>
+                                carousel.map((item, index) => (
+                                    <CarouselItem
+                                        key={index}
+                                        className="basis-1/3 flex flex-col items-center justify-center gap-5">
+                                        <img src={item.img.src} alt={item.img.alt} width={325} />
+                                        <a href={item.link} className="text-white text-3xl hover:underline">
+                                            {item.label}
+                                        </a>
+                                    </CarouselItem>
+                                ))
+                            )
+                        }
+                    </CarouselContent>
+                    <CarouselPrevious
+                        className="text-secondary scale-[3] translate-x-[100%] translate"
+                        variant={"ghost"}
+                    />
+                    <CarouselNext className="text-secondary scale-[3] -translate-x-[100%]" variant={"ghost"} />
+                </Carousel>
             </section>
             <CommunFaq />
         </div>
