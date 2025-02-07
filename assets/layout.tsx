@@ -1,18 +1,21 @@
 import { PlusIcon } from "lucide-react";
 import React from "react";
+import Header from "./components/Header";
 import Logo from "./components/Logo";
 import { Button as RadixButton } from "./components/ui/button";
 import Instagram from "./components/ui/icons/Instagram";
 import Linkedin from "./components/ui/icons/Linkedin";
 import { Input as RadixInput } from "./components/ui/input";
+import { NavLink } from "./types";
 import { cn } from "./utils";
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default function Layout({ children, links }: { children: React.ReactNode; links: NavLink[] }) {
     return (
-        <main className="relative w-screen flex flex-col min-h-screen">
-            {children}
+        <>
+            <Header links={links} />
+            <main className="relative w-screen flex flex-col min-h-screen">{children}</main>
             <Footer />
-        </main>
+        </>
     );
 }
 
