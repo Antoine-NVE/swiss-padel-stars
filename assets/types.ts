@@ -55,3 +55,9 @@ export type IconProps = {
     width: number;
     height: number;
 };
+
+export type RouteType = {
+    label: string;
+    href: string;
+    Page: () => React.JSX.Element;
+};

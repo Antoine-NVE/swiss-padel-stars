@@ -6,12 +6,14 @@ import Infrastructure from "./pages/infrastructure.tsx";
 import Partenariat from "./pages/partenariat.tsx";
 import Produits from "./pages/produits.tsx";
 import Layout from "./layout.tsx";
-import Header from "./components/Header.tsx";
 import { BrowserRouter, Route, Routes } from "react-router";
 import "./styles/app.css";
 import React from "react";
 import { createRoot } from "react-dom/client";
-
+/**
+ * intra-website navigation
+ * @type {{label : string ; href: string ; Page: () => React.JSX.Element;}[]}
+ */
 const links = [
     {
         label: "Accueil",
@@ -48,19 +50,34 @@ const links = [
 const rootElement = document.getElementById("root");
 if (rootElement) {
     const root = createRoot(rootElement);
+
     root.render(
         <React.StrictMode>
             <BrowserRouter>
                 <Routes>
                     {links.map((link) => {
+                        /**
+                         * Layout contient le Header et le Footer
+                         *
+                         * ```tsx
+                         *
+                         * <>
+                         *   <Header links={links} />
+                         *   <main className="relative w-screen flex flex-col min-h-screen">
+                         *      {children}
+                         *   </main>
+                         *   <Footer />
+                         * </>
+                         *
+                         * ```
+                         */
                         const { Page, href, label } = link;
                         return (
                             <Route
                                 key={label}
                                 path={href}
                                 element={
-                                    <Layout>
-                                        <Header links={links} />
+                                    <Layout links={links}>
                                         <Page />
                                     </Layout>
                                 }
