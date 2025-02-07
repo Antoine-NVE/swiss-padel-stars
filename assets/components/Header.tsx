@@ -1,7 +1,8 @@
-import { MenuIcon, PlusIcon, ShoppingCartIcon, UserIcon } from "lucide-react";
+import { MenuIcon, ShoppingCartIcon, UserIcon } from "lucide-react";
 import React from "react";
 import type { CartProductType, NavLink } from "../types";
 import { cn } from "../utils";
+import { Input } from "./Input";
 import Logo from "./Logo";
 import { Button as RadixButton } from "./ui/button";
 import {
@@ -11,7 +12,6 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "./ui/dropdown";
-import { Input as RadixInput } from "./ui/input";
 import Spacer from "./ui/spacer";
 
 const ICON_SIZE = 38;
@@ -206,31 +206,6 @@ const Content = ({ children, className }: { children: React.ReactNode; className
             sideOffset={25}>
             {children}
         </DropdownMenuContent>
-    );
-};
-
-const Input = ({
-    name,
-    htmlFor,
-    placeholder,
-    type,
-}: {
-    name: string;
-    htmlFor: string;
-    placeholder: string;
-    type: string;
-}) => {
-    return (
-        <label htmlFor={htmlFor} className="relative w-full max-w-[90%]">
-            <RadixInput
-                type={type}
-                name={name}
-                id={htmlFor}
-                placeholder={placeholder}
-                className="bg-grey text-white placeholder:text-white rounded-full h-10"
-            />
-            <PlusIcon size={18} className="text-white rotate-45 absolute top-1/2 right-2 transform -translate-y-1/2" />
-        </label>
     );
 };
 
