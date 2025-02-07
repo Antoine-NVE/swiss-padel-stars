@@ -12,6 +12,9 @@ import "./styles/app.css";
 import React from "react";
 import { createRoot } from "react-dom/client";
 
+/**
+ * intra-website navigation
+ */
 const links = [
     {
         label: "Accueil",
@@ -48,19 +51,34 @@ const links = [
 const rootElement = document.getElementById("root");
 if (rootElement) {
     const root = createRoot(rootElement);
+
     root.render(
         <React.StrictMode>
             <BrowserRouter>
                 <Routes>
                     {links.map((link) => {
+                        /**
+                         * Layout contient le Header et le Footer
+                         *
+                         * ```tsx
+                         *
+                         * <>
+                         *   <Header links={links} />
+                         *   <main className="relative w-screen flex flex-col min-h-screen">
+                         *      {children}
+                         *   </main>
+                         *   <Footer />
+                         * </>
+                         *
+                         * ```
+                         */
                         const { Page, href, label } = link;
                         return (
                             <Route
                                 key={label}
                                 path={href}
                                 element={
-                                    <Layout>
-                                        <Header links={links} />
+                                    <Layout links={links}>
                                         <Page />
                                     </Layout>
                                 }
