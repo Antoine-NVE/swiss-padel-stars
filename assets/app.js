@@ -6,14 +6,13 @@ import Infrastructure from "./pages/infrastructure.tsx";
 import Partenariat from "./pages/partenariat.tsx";
 import Produits from "./pages/produits.tsx";
 import Layout from "./layout.tsx";
-import Header from "./components/Header.tsx";
 import { BrowserRouter, Route, Routes } from "react-router";
 import "./styles/app.css";
 import React from "react";
 import { createRoot } from "react-dom/client";
-
 /**
  * intra-website navigation
+ * @type {{label : string ; href: string ; Page: () => React.JSX.Element;}[]}
  */
 const links = [
     {
