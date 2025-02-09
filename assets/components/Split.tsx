@@ -12,12 +12,14 @@ export default function Split({
     smImg,
     height = 450,
     direction = "ltr",
+    className,
 }: {
     children: React.ReactNode;
     bgImg: Omit<ImgProps, "height" | "width">;
     smImg?: Omit<ImgProps, "height" | "width">;
     direction?: "ltr" | "rtl";
     height?: number;
+    className?: string;
 }) {
     return (
         <section className="relative">
@@ -25,7 +27,8 @@ export default function Split({
             <div
                 className={cn(
                     "absolute inset-0 flex items-center justify-around gap-10",
-                    direction === "ltr" ? "flex-row" : "flex-row-reverse"
+                    direction === "ltr" ? "flex-row" : "flex-row-reverse",
+                    className
                 )}>
                 {
                     /* petite image ou pas ?   */ smImg && (
