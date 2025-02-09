@@ -6,44 +6,50 @@ import Infrastructure from "./pages/infrastructure.tsx";
 import Partenariat from "./pages/partenariat.tsx";
 import Produits from "./pages/produits.tsx";
 import Layout from "./layout.tsx";
-import { BrowserRouter, Route, Routes } from "react-router";
+import { BrowserRouter, Outlet, Route, Routes } from "react-router";
 import "./styles/app.css";
 import React from "react";
 import { createRoot } from "react-dom/client";
 /**
  * intra-website navigation
- * @type {{label : string ; href: string ; Page: () => React.JSX.Element;}[]}
+ * @type {{label : string ; href: string ; available : boolean ; Page: () => React.JSX.Element;}[]}
  */
 const links = [
     {
         label: "Accueil",
-        href: "/", // chemin du routeur client
+        href: "", // chemin du routeur client
         Page: Accueil, // rendu
+        available: true,
     },
     {
         label: "Qui sommes-nous",
-        href: "/nous",
+        href: "nous",
         Page: Nous,
+        available: true,
     },
     {
         label: "Contact",
-        href: "/contact",
+        href: "contact",
         Page: Contact,
+        available: true,
     },
     {
         label: "Infrastructure",
-        href: "/infrastructure",
+        href: "infrastructure",
         Page: Infrastructure,
+        available: true,
     },
     {
         label: "Partenariat et sponsoring",
-        href: "/partenariat",
+        href: "partenariat",
         Page: Partenariat,
+        available: true,
     },
     {
         label: "Produits",
-        href: "/produits",
+        href: "produits",
         Page: Produits,
+        available: true,
     },
 ];
 
@@ -55,35 +61,16 @@ if (rootElement) {
         <React.StrictMode>
             <BrowserRouter>
                 <Routes>
-                    {links.map((link) => {
-                        /**
-                         * Layout contient le Header et le Footer
-                         *
-                         * ```tsx
-                         *
-                         * <>
-                         *   <Header links={links} />
-                         *   <main className="relative w-screen flex flex-col min-h-screen">
-                         *      {children}
-                         *   </main>
-                         *   <Footer />
-                         * </>
-                         *
-                         * ```
-                         */
-                        const { Page, href, label } = link;
-                        return (
-                            <Route
-                                key={label}
-                                path={href}
-                                element={
-                                    <Layout links={links}>
-                                        <Page />
-                                    </Layout>
-                                }
-                            />
-                        );
-                    })}
+                    <Route
+                        element={
+                            <Layout links={links}>
+                                <Outlet />
+                            </Layout>
+                        }>
+                        {links.map(({ Page, href, label, available }) =>
+                            available ? <Route key={label} path={href} index={href === ""} element={<Page />} /> : null
+                        )}
+                    </Route>
                 </Routes>
             </BrowserRouter>
         </React.StrictMode>
