@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Button as RadixButton } from "../components/ui/button";
+import { Button } from "../components/ui/button";
 import { type ImgProps } from "../types";
 import { cn } from "../utils";
 
@@ -8,23 +8,32 @@ import { cn } from "../utils";
  */
 type ArticleProps = {
     img: ImgProps | ImgProps[];
-    text: string;
+    text: Partial<{
+        title: string;
+        description: string;
+        btn: string;
+        subTitle: string;
+    }>;
     direction?: "rtl" | "ltr";
-    btnText?: string;
 };
 
 /**
  * Un article est un element indépendant image + texte + bouton
  * la propriété direction permet de spécifier l'ordre de présentation
  */
-export const Article = ({ img, text, direction, btnText }: ArticleProps) => {
+export const Article = ({ img, text, direction }: ArticleProps) => {
     if (Array.isArray(img) && img.length > 2) {
         throw new Error("More than 2 images is not implemented yet !");
+    }
+
+    if ("subtitle" in text && !("title" in text)) {
+        throw new Error("Un sous-titre dois toujours avoir un titre !");
     }
 
     return (
         <article
             className={cn(
+                /* .wrapper est initialisé à la volée */
                 "flex center justify-around [&_.wrapper]:w-[500px]",
                 direction === "ltr" && "flex-row-reverse"
             )}>
@@ -32,8 +41,21 @@ export const Article = ({ img, text, direction, btnText }: ArticleProps) => {
                 <ArticleImage img={img} />
             </div>
             <div className="wrapper flex flex-col items-center justify-around">
-                <p className="text-white text-3xl text-balance text-justify">{text}</p>
-                {btnText && <Button className="w-fit">{btnText}</Button>}
+                {text.subTitle ? (
+                    /* si un sous-titre est fourni */
+                    <div className="flex flex-col justify-start items-center gap-2 text-left w-full">
+                        <h3 className="w-full text-secondary text-4xl font-semibold">{text.title}</h3>
+                        <p className="w-full text-white">{text.subTitle}</p>
+                    </div>
+                ) : (
+                    /* pas de sous-titre fourni */
+                    <h3 className="w-full text-secondary text-4xl font-semibold text-left">{text.title}</h3>
+                )}
+                {text.description && (
+                    /* Si une description est fourni */
+                    <p className="w-full text-white text-3xl text-balance text-justify">{text.description}</p>
+                )}
+                {text.btn && /* Si un texte de bouton est fourni */ <Button className="w-fit">{text.btn}</Button>}
             </div>
         </article>
     );
