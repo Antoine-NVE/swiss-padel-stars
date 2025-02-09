@@ -70,13 +70,14 @@ export default function Page() {
             <Hero title="Qui sommes-nous" img={{ src: "/build/images/nous/hero.png", alt: "banniere" }} />
             <section className="space-y-10 w-full">
                 {articles.map((article, index) => {
+                    // présentation de gauche à droite ou de droite à gauche
+                    const dir = index % 2 === 0 ? "rtl" : "ltr";
                     return (
                         <Article
-                            direction={index % 2 === 0 ? "ltr" : "rtl"} // présentation de gauche à droite ou de droite à gauche
+                            direction={dir}
                             key={index}
                             img={article.img}
-                            text={article.text}
-                            btnText={article.btnText}
+                            text={{ description: article.text, btn: article.btnText }}
                         />
                     );
                 })}
@@ -125,11 +126,10 @@ export default function Page() {
                             )
                         }
                     </CarouselContent>
-                    <CarouselPrevious className="text-secondary scale-[3] translate-x-[100%]" variant={"ghost"} />
-                    <CarouselNext className="text-secondary scale-[3] -translate-x-[100%]" variant={"ghost"} />
+                    <CarouselPrevious className="translate-x-[100%] -translate-y-[100%]" />
+                    <CarouselNext className="-translate-x-[100%] -translate-y-[100%]" />
                 </Carousel>
             </section>
-
             <CommunFaq />
         </div>
     );

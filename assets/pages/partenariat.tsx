@@ -34,8 +34,7 @@ export default function Page() {
                             direction={dir}
                             key={index}
                             img={article.img}
-                            text={article.text}
-                            btnText={article.btnText}
+                            text={{ description: article.text, btn: article.btnText }}
                         />
                     );
                 })}
