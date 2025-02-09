@@ -59,6 +59,11 @@ const carousel = [
         ],
     },
 ];
+
+const splitImgs = {
+    sm: { src: "build/images/nous/body-split-sm.png", alt: "" },
+    bg: { src: "build/images/nous/body-split-xl.png", alt: "" },
+};
 export default function Page() {
     return (
         <div className="grow bg-dark-primary space-y-10">
@@ -76,9 +81,7 @@ export default function Page() {
                     );
                 })}
             </section>
-            <Split
-                smImg={{ src: "build/images/nous/body-split-sm.png", alt: "" }}
-                bgImg={{ src: "build/images/nous/body-split-xl.png", alt: "" }}>
+            <Split smImg={splitImgs.sm} bgImg={splitImgs.bg} direction="ltr">
                 <p className="text-white text-3xl text-balance text-justify max-w-[40%]">
                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Labore perspiciatis magnam beatae deserunt
                     voluptate reprehenderit ea reiciendis laudantium dolorum. Lorem ipsum, dolor sit amet consectetur
