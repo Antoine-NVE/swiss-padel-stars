@@ -51,17 +51,7 @@ export default function Page() {
                     adipisicing elit.
                 </p>
             </Split>
-            {/* <section className="relative">
-                <img src="build/images/nous/body-split-xl.png" alt="" className="object-cover w-screen" height={450} />
-                <div className="absolute inset-0 flex items-center justify-around gap-10">
-                    <img src="build/images/nous/body-split-sm.png" alt="" className="h-[80%] object-cover rounded-lg" />
-                    <p className="text-white text-3xl text-balance text-justify max-w-[40%]">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Labore perspiciatis magnam beatae
-                        deserunt voluptate reprehenderit ea reiciendis laudantium dolorum. Lorem ipsum, dolor sit amet
-                        consectetur adipisicing elit.
-                    </p>
-                </div>
-            </section> */}
+
             <CommunFaq />
         </div>
     );
