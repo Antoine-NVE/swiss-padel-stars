@@ -2,7 +2,7 @@ import React from "react";
 import { cn } from "../utils";
 import { Input } from "./Input";
 import Logo from "./Logo";
-import { Button as RadixButton } from "./ui/button";
+import { Button } from "./ui/button";
 import Instagram from "./ui/icons/Instagram";
 import Linkedin from "./ui/icons/Linkedin";
 
@@ -51,16 +51,3 @@ export default function Footer() {
         </footer>
     );
 }
-
-/**
- * ui components
- */
-const Button = ({ children, className }: { children: React.ReactNode; className?: string }) => {
-    return (
-        <RadixButton
-            className={cn("bg-dark-secondary text-white py-2 px-4 rounded-3xl w-fit", className)}
-            onClick={console.log}>
-            {children}
-        </RadixButton>
-    );
-};

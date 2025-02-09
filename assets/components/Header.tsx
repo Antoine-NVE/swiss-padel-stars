@@ -4,7 +4,7 @@ import type { CartProductType, NavLink } from "../types";
 import { cn } from "../utils";
 import { Input } from "./Input";
 import Logo from "./Logo";
-import { Button as RadixButton } from "./ui/button";
+import { Button, Button as RadixButton } from "./ui/button";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -218,16 +218,6 @@ const Box = ({ children, as }: { children: React.ReactNode; as: "form" | "div" }
                 <div className="flex flex-col justify-evenly px-6 grow items-center gap-5">{children}</div>
             )}
         </>
-    );
-};
-
-const Button = ({ children, className }: { children: React.ReactNode; className?: string }) => {
-    return (
-        <RadixButton
-            className={cn("bg-dark-secondary text-white py-2 px-4 rounded-3xl w-fit", className)}
-            onClick={console.log}>
-            {children}
-        </RadixButton>
     );
 };
 

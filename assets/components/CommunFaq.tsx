@@ -1,5 +1,5 @@
 import React from "react";
-import { Button as RadixButton } from "../components/ui/button";
+import { Button, Button as RadixButton } from "../components/ui/button";
 import { FaqType } from "../types";
 import { cn } from "../utils";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./ui/accordion";
@@ -55,13 +55,3 @@ export default function CommunFaq({ faq = defaultFaq }: { faq?: FaqType[] }) {
         </section>
     );
 }
-
-const Button = ({ children, className }: { children: React.ReactNode; className?: string }) => {
-    return (
-        <RadixButton
-            className={cn("bg-dark-secondary text-white py-2 px-4 rounded-3xl w-fit border", className)}
-            onClick={console.log}>
-            {children}
-        </RadixButton>
-    );
-};

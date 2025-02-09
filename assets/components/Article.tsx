@@ -1,5 +1,5 @@
 import React from "react";
-import { Button as RadixButton } from "../components/ui/button";
+import { Button, Button as RadixButton } from "../components/ui/button";
 import { type ImgProps } from "../types";
 import { cn } from "../utils";
 
@@ -60,14 +60,4 @@ export const ArticleImage = ({ img }: { img: ImgProps | ImgProps[] }) => {
     }
 
     return <img {...img} className="object-cover rounded-xl" />;
-};
-
-const Button = ({ children, className }: { children: React.ReactNode; className?: string }) => {
-    return (
-        <RadixButton
-            className={cn("bg-dark-secondary text-white py-2 px-4 rounded-3xl w-fit border", className)}
-            onClick={console.log}>
-            {children}
-        </RadixButton>
-    );
 };
