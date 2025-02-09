@@ -10,18 +10,23 @@ export default function Page() {
     // articles à afficher
     const articles: { img: ImgProps | ImgProps[]; text: string; btnText?: string }[] = [
         {
-            img: { src: "build/images/nous-body-img-2.png", alt: "", width: 500, height: 400 },
+            img: { src: "build/images/nous/body-2.png", alt: "", width: 500, height: 400 },
             text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip.",
         },
         {
-            img: { src: "build/images/nous-body-img-1.png", alt: "", width: 500, height: 400 },
+            img: { src: "build/images/nous/body-1.png", alt: "", width: 500, height: 400 },
             text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip.",
         },
     ];
 
     const carousel = [
         {
-            img: { src: "build/images/carousel-1.png", alt: "evenement 1 from the carousel", width: 325, height: 325 },
+            img: {
+                src: "build/images/nous/carousel-1.png",
+                alt: "evenement 1 from the carousel",
+                width: 325,
+                height: 325,
+            },
             link: "/",
             label: "Evenement 1",
             description: [
@@ -29,7 +34,12 @@ export default function Page() {
             ],
         },
         {
-            img: { src: "build/images/carousel-2.png", alt: "evenement 2 from the carousel", width: 325, height: 325 },
+            img: {
+                src: "build/images/nous/carousel-2.png",
+                alt: "evenement 2 from the carousel",
+                width: 325,
+                height: 325,
+            },
             link: "/",
             label: "Evenement 2",
             description: [
@@ -37,7 +47,12 @@ export default function Page() {
             ],
         },
         {
-            img: { src: "build/images/carousel-3.png", alt: "evenement 3 from the carousel", width: 325, height: 325 },
+            img: {
+                src: "build/images/nous/carousel-3.png",
+                alt: "evenement 3 from the carousel",
+                width: 325,
+                height: 325,
+            },
             link: "/",
             label: "Evenement 3",
             description: [
@@ -48,7 +63,7 @@ export default function Page() {
 
     return (
         <div className="grow bg-dark-primary space-y-10">
-            <Hero title="Qui sommes-nous" img={{ src: "/build/images/hero-nous.png", alt: "banniere" }} />
+            <Hero title="Qui sommes-nous" img={{ src: "/build/images/nous/hero.png", alt: "banniere" }} />
             <section className="space-y-10 w-full">
                 {articles.map((article, index) => {
                     const dir = index % 2 === 0 ? "ltr" : "rtl"; // présentation de gauche à droite ou de droite à gauche
@@ -64,13 +79,9 @@ export default function Page() {
                 })}
             </section>
             <section className="relative">
-                <img src="build/images/nous-body-split-big.png" alt="" className="object-cover w-screen" height={450} />
+                <img src="build/images/nous/body-split-xl.png" alt="" className="object-cover w-screen" height={450} />
                 <div className="absolute inset-0 flex items-center justify-around gap-10">
-                    <img
-                        src="build/images/nous-body-split-small.png"
-                        alt=""
-                        className="h-[80%] object-cover rounded-lg"
-                    />
+                    <img src="build/images/nous/body-split-sm.png" alt="" className="h-[80%] object-cover rounded-lg" />
                     <p className="text-white text-3xl text-balance text-justify max-w-[40%]">
                         Lorem ipsum dolor sit amet consectetur adipisicing elit. Labore perspiciatis magnam beatae
                         deserunt voluptate reprehenderit ea reiciendis laudantium dolorum. Lorem ipsum, dolor sit amet
@@ -88,6 +99,7 @@ export default function Page() {
                                 carousel.map((item, index) => (
                                     <CarouselItem
                                         key={index}
+                                        /* basis-1/x => x images visibles */
                                         className="basis-1/3 flex flex-col items-center justify-center gap-5">
                                         <img src={item.img.src} alt={item.img.alt} width={325} />
                                         <Dialog>

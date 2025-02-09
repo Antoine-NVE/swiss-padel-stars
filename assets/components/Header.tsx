@@ -95,7 +95,12 @@ const CartSection = ({ title, Icon }: { title: string; Icon: React.ReactNode }) 
             quantity: 1,
             price: "60.00",
             unit: "CHF",
-            img: { src: "build/images/raquette.png", alt: "une raquette de padel ping-pong", width: 200, height: 180 },
+            img: {
+                src: "build/images/header/raquette.png",
+                alt: "une raquette de padel ping-pong",
+                width: 200,
+                height: 180,
+            },
         },
         {
             name: "Balles de padel ping-pong",
@@ -103,7 +108,7 @@ const CartSection = ({ title, Icon }: { title: string; Icon: React.ReactNode }) 
             price: "30.00",
             unit: "CHF",
             img: {
-                src: "build/images/balles.png",
+                src: "build/images/header/balles.png",
                 alt: "des balles blanches de padel ping-pong",
                 width: 200,
                 height: 180,

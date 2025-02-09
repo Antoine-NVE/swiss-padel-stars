@@ -9,7 +9,7 @@ import { Textarea } from "../components/ui/textarea";
 export default function Page() {
     return (
         <div className="grow bg-dark-primary space-y-10">
-            <Hero title="Formulaire de contact" img={{ src: "/build/images/hero-contact.png", alt: "banniere" }} />
+            <Hero title="Formulaire de contact" img={{ src: "/build/images/contact/hero.png", alt: "banniere" }} />
             {/* FORMULAIRE DE CONTACT */}
             {/* FORMULAIRE DE CONTACT */}
             {/* FORMULAIRE DE CONTACT */}
@@ -35,13 +35,13 @@ export default function Page() {
                     </div>
                 </form>
             </section>
-            {/* Coordonnée */}
-            {/* Coordonnée */}
-            {/* Coordonnée */}
-            {/* Coordonnée */}
-            {/* Coordonnée */}
-            {/* Coordonnée */}
-            {/* Coordonnée */}
+            {/* Coordonnée + MAP */}
+            {/* Coordonnée + MAP */}
+            {/* Coordonnée + MAP */}
+            {/* Coordonnée + MAP */}
+            {/* Coordonnée + MAP */}
+            {/* Coordonnée + MAP */}
+            {/* Coordonnée + MAP */}
             <article className={"flex center justify-around [&_.wrapper]:w-[500px]"}>
                 <div className="wrapper flex flex-col items-start justify-around">
                     <h3 className="text-secondary text-3xl font-semibold mb-3">Siège social</h3>
