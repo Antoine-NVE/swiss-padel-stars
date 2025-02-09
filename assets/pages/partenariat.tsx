@@ -34,7 +34,8 @@ export default function Page() {
                             direction={dir}
                             key={index}
                             img={article.img}
-                            text={{ description: article.text, btn: article.btnText }}
+                            description={article.text}
+                            btn={<Button>{article.btnText}</Button>}
                         />
                     );
                 })}

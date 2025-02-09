@@ -3,6 +3,7 @@ import { Article } from "../components/Article";
 import CommunFaq from "../components/CommunFaq";
 import { Hero } from "../components/Hero";
 import Split from "../components/Split";
+import { Button } from "../components/ui/button";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../components/ui/carousel";
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "../components/ui/dialog";
 import { type ImgProps } from "../types";
@@ -11,10 +12,12 @@ const articles: { img: ImgProps | ImgProps[]; text: string; btnText?: string }[]
     {
         img: { src: "build/images/nous/body-2.png", alt: "", width: 500, height: 400 },
         text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip.",
+        btnText: "button",
     },
     {
         img: { src: "build/images/nous/body-1.png", alt: "", width: 500, height: 400 },
         text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip.",
+        btnText: "button",
     },
 ];
 
@@ -77,7 +80,8 @@ export default function Page() {
                             direction={dir}
                             key={index}
                             img={article.img}
-                            text={{ description: article.text, btn: article.btnText }}
+                            description={article.text}
+                            btn={<Button>{article.btnText}</Button>}
                         />
                     );
                 })}

@@ -2,6 +2,7 @@ import React from "react";
 import { Article } from "../components/Article";
 import CommunFaq from "../components/CommunFaq";
 import { Hero } from "../components/Hero";
+import { Button } from "../components/ui/button";
 import { type ImgProps } from "../types";
 
 const articles: { img: ImgProps | ImgProps[]; text: string; btnText: string }[] = [
@@ -39,7 +40,8 @@ export default function Page() {
                             direction={dir}
                             key={index}
                             img={article.img}
-                            text={{ description: article.text, btn: article.btnText }}
+                            description={article.text}
+                            btn={<Button>{article.btnText}</Button>}
                         />
                     );
                 })}
