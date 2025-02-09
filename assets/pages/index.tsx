@@ -29,7 +29,7 @@ export default function Page() {
     // articles à afficher
 
     return (
-        <div className="grow bg-dark-primary space-y-10">
+        <>
             <Hero title="Swiss Padel Stars" img={{ src: "/build/images/index/hero.png", alt: "banniere de la page" }} />
             <section className="space-y-10 w-full">
                 {articles.map((article, index) => {
@@ -47,6 +47,6 @@ export default function Page() {
                 })}
             </section>
             <CommunFaq />
-        </div>
+        </>
     );
 }

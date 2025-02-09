@@ -24,7 +24,9 @@ export default function Layout({ children, links }: { children: React.ReactNode;
     return (
         <>
             <Header links={links} />
-            <main className="relative w-screen flex flex-col min-h-screen overflow-x-hidden">{children}</main>
+            <main className="relative w-screen flex flex-col min-h-screen overflow-x-hidden grow bg-dark-primary space-y-10">
+                {children}
+            </main>
             <Footer />
         </>
     );

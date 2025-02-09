@@ -20,7 +20,7 @@ const articles: { img: ImgProps | ImgProps[]; text: string; btnText?: string }[]
 
 export default function Page() {
     return (
-        <div className="grow bg-dark-primary space-y-10">
+        <>
             <Hero
                 title="Partenariat & Sponsoring"
                 img={{ src: "/build/images/partenariat/hero.png", alt: "banniere" }}
@@ -53,6 +53,6 @@ export default function Page() {
             </Split>
 
             <CommunFaq />
-        </div>
+        </>
     );
 }

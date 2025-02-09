@@ -34,7 +34,7 @@ const defaultFaq: FaqType[] = [
 
 export default function CommunFaq({ faq = defaultFaq }: { faq?: FaqType[] }) {
     return (
-        <section className="flex flex-col items-start px-36 py-6 space-y-6 bg-primary/20  text-white">
+        <section className="flex flex-col items-start px-36 py-8 space-y-6 bg-primary/20  text-white">
             <p className="text-white">
                 Découvrez les réponses aux questions fréquentes concernant nos services et événements de padel.
             </p>

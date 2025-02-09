@@ -67,7 +67,7 @@ const articles: ProduitArticleProps[] = [
 
 export default function Page() {
     return (
-        <div className="grow bg-dark-primary space-y-10">
+        <>
             <Hero title="Produits" img={{ src: "/build/images/produits/hero.png", alt: "banniere" }} />
             <section className="space-y-10 w-full">
                 {articles.map(
@@ -165,6 +165,6 @@ export default function Page() {
             </Split>
             <TestimonyCarousel />
             <CommunFaq />
-        </div>
+        </>
     );
 }

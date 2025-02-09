@@ -69,7 +69,7 @@ const splitImgs = {
 };
 export default function Page() {
     return (
-        <div className="grow bg-dark-primary space-y-10">
+        <>
             <Hero title="Qui sommes-nous" img={{ src: "/build/images/nous/hero.png", alt: "banniere" }} />
             <section className="space-y-10 w-full">
                 {articles.map((article, index) => {
@@ -135,6 +135,6 @@ export default function Page() {
                 </Carousel>
             </section>
             <CommunFaq />
-        </div>
+        </>
     );
 }

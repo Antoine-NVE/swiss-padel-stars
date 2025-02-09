@@ -20,7 +20,7 @@ const articles: { img: ImgProps | ImgProps[]; text: string; btnText?: string }[]
 
 export default function Page() {
     return (
-        <div className="grow bg-dark-primary space-y-10">
+        <>
             <Hero title="Infrastructure" img={{ src: "/build/images/infrastructure/hero.png", alt: "banniere" }} />
             <section className="space-y-10 w-full">
                 {articles.map((article, index) => {
@@ -48,8 +48,7 @@ export default function Page() {
                     adipisicing elit.
                 </p>
             </Split>
-
             <CommunFaq />
-        </div>
+        </>
     );
 }
