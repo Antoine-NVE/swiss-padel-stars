@@ -5,7 +5,7 @@ import { NavLink } from "./types";
 //
 
 /**
- * Layout contient le Header et le Footer
+ * Layout contient le Header et le Footer.
  * Outlet est le lieu de rendu des composants enfants qui sont des Page
  *
  * ```tsx
