@@ -1,7 +1,6 @@
 import React from "react";
-import { Button, Button as RadixButton } from "../components/ui/button";
+import { Button } from "../components/ui/button";
 import { FaqType } from "../types";
-import { cn } from "../utils";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./ui/accordion";
 
 const defaultFaq: FaqType[] = [
