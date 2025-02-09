@@ -17,7 +17,7 @@ import { createRoot } from "react-dom/client";
 const links = [
     {
         label: "Accueil",
-        href: "", // chemin du routeur client
+        href: "/", // chemin du routeur client
         Page: Accueil, // rendu
         available: true,
     },
