@@ -1,11 +1,10 @@
-import { PlusIcon } from "lucide-react";
 import React from "react";
 import { cn } from "../utils";
+import { Input } from "./Input";
 import Logo from "./Logo";
-import { Button as RadixButton } from "./ui/button";
+import { Button } from "./ui/button";
 import Instagram from "./ui/icons/Instagram";
 import Linkedin from "./ui/icons/Linkedin";
-import { Input as RadixInput } from "./ui/input";
 
 const Separator = ({ className, height = 2 }: { className?: string; height?: number }) => {
     return <div className={cn("bg-white w-full", className)} style={{ height: height + "px" }}></div>;
@@ -52,41 +51,3 @@ export default function Footer() {
         </footer>
     );
 }
-
-/**
- * ui components
- */
-const Button = ({ children, className }: { children: React.ReactNode; className?: string }) => {
-    return (
-        <RadixButton
-            className={cn("bg-dark-secondary text-white py-2 px-4 rounded-3xl w-fit", className)}
-            onClick={console.log}>
-            {children}
-        </RadixButton>
-    );
-};
-
-const Input = ({
-    name,
-    htmlFor,
-    placeholder,
-    type,
-}: {
-    name: string;
-    htmlFor: string;
-    placeholder: string;
-    type: string;
-}) => {
-    return (
-        <label htmlFor={htmlFor} className="relative w-full max-w-[90%]">
-            <RadixInput
-                type={type}
-                name={name}
-                id={htmlFor}
-                placeholder={placeholder}
-                className="bg-white text-black placeholder:text-black rounded-full h-8"
-            />
-            <PlusIcon size={16} className="text-black rotate-45 absolute top-1/2 right-2 transform -translate-y-1/2" />
-        </label>
-    );
-};

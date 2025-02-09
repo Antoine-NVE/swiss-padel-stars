@@ -1,9 +1,10 @@
-import { MenuIcon, PlusIcon, ShoppingCartIcon, UserIcon } from "lucide-react";
-import React from "react";
+import { MenuIcon, ShoppingCartIcon, UserIcon } from "lucide-react";
+import React, { useState } from "react";
 import type { CartProductType, NavLink } from "../types";
-import { cn } from "../utils";
+import { calcPriceFromString, cn } from "../utils";
+import { Input } from "./Input";
 import Logo from "./Logo";
-import { Button as RadixButton } from "./ui/button";
+import { Button, Button as RadixButton } from "./ui/button";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -11,7 +12,6 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "./ui/dropdown";
-import { Input as RadixInput } from "./ui/input";
 import Spacer from "./ui/spacer";
 
 const ICON_SIZE = 38;
@@ -85,31 +85,79 @@ const AuthSection = ({ Icon }: { Icon: React.ReactNode }) => {
     );
 };
 
+const products: CartProductType[] = [
+    {
+        id: "1",
+        name: "Raquette de padel ping-pong",
+        price: "60.00",
+        unit: "CHF",
+        img: {
+            src: "build/images/header/raquette.png",
+            alt: "une raquette de padel ping-pong",
+            width: 200,
+            height: 180,
+        },
+    },
+    {
+        id: "2",
+        name: "Balles de padel ping-pong",
+        price: "30.00",
+        unit: "CHF",
+        img: {
+            src: "build/images/header/balles.png",
+            alt: "des balles blanches de padel ping-pong",
+            width: 200,
+            height: 180,
+        },
+    },
+];
+
+type ProductLookup = { id: string; quantity: number; price: string };
 /**
  * Cart section with lorem products
  */
 const CartSection = ({ title, Icon }: { title: string; Icon: React.ReactNode }) => {
-    const products: CartProductType[] = [
-        {
-            name: "Raquette de padel ping-pong",
-            quantity: 1,
-            price: "60.00",
-            unit: "CHF",
-            img: { src: "build/images/raquette.png", alt: "une raquette de padel ping-pong", width: 200, height: 180 },
-        },
-        {
-            name: "Balles de padel ping-pong",
-            quantity: 2,
-            price: "30.00",
-            unit: "CHF",
-            img: {
-                src: "build/images/balles.png",
-                alt: "des balles blanches de padel ping-pong",
-                width: 200,
-                height: 180,
-            },
-        },
-    ];
+    const [lookup, setLookup] = useState<{ state: ProductLookup[]; total: string }>({
+        state: products.map(({ id, price }) => {
+            return {
+                id,
+                price,
+                quantity: 0,
+            };
+        }),
+        total: "",
+    });
+
+    const handleQuantity = (id: string, action: "increment" | "decrement") => {
+        setLookup((previous) => {
+            const state = previous.state.map((product) =>
+                product.id === id
+                    ? {
+                          ...product,
+                          quantity:
+                              action === "increment"
+                                  ? product.quantity + 1
+                                  : product.quantity - 1 < 0
+                                  ? product.quantity
+                                  : product.quantity - 1,
+                      }
+                    : product
+            );
+
+            const total = state.reduce((acc, cur) => {
+                const currentQuantity = cur.quantity;
+                const currentPrice = cur.price;
+                const amount = calcPriceFromString(currentPrice, currentQuantity);
+                return acc + amount;
+            }, 0);
+
+            return {
+                state,
+                total: total.toFixed(2),
+            };
+        });
+    };
+
     // ShoppingCart
     return (
         <DropdownMenu>
@@ -121,13 +169,19 @@ const CartSection = ({ title, Icon }: { title: string; Icon: React.ReactNode }) 
                 <section className="flex flex-col gap-10">
                     {products.map((product) => (
                         <CartProduct
-                            name={product.name}
-                            quantity={product.quantity}
-                            price={product.price}
-                            img={product.img}
-                            unit={product.unit}
+                            product={product}
+                            handler={handleQuantity}
+                            lookup={lookup.state.find((l) => l.id === product.id) as ProductLookup}
+                            key={product.id}
                         />
                     ))}
+                    <div className="w-full h-16 rounded-full bg-grey flex items-center justify-between px-4">
+                        <div className="flex gap-3 items-center">
+                            <p className="text-secondary text-left font-semibold text-lg">Sous-total :</p>
+                            <p className="font-medium text-white">{lookup.total || "0.00"} CHF</p>
+                        </div>
+                        <Button>Valider le panier</Button>
+                    </div>
                 </section>
             </Content>
         </DropdownMenu>
@@ -155,11 +209,17 @@ export default function Header({ links }: { links: NavLink[] }) {
     );
 }
 
+type CartProductProps = {
+    product: CartProductType;
+    lookup: ProductLookup;
+    handler: (id: string, action: "increment" | "decrement") => void;
+};
 /**
  * Styled components ( secondary UI components )
  */
-const CartProduct = ({ name, quantity, price, img, unit }: CartProductType) => {
-    const { src, alt } = img;
+const CartProduct = ({ handler, lookup, product }: CartProductProps) => {
+    const { src, alt } = product.img;
+    const { id, name, price, unit } = product;
 
     return (
         <article className="grid grid-cols-2 text-white gap-4 items-center">
@@ -174,14 +234,18 @@ const CartProduct = ({ name, quantity, price, img, unit }: CartProductType) => {
                 </header>
                 <div className="flex justify-between">
                     <p>Quantité : </p>
-                    <p className="grow text-center">{quantity}</p>
+                    <p className="grow text-center">{lookup.quantity}</p>
                     <Spacer />
                 </div>
                 <div className="flex items-center justify-center">
-                    <Button className="rounded-xl bg-primary/20 hover:bg-primary/30 mix-blend-plus-lighter rounded-r-none h-6">
+                    <Button
+                        className="rounded-xl bg-primary/20 hover:bg-primary/30 mix-blend-plus-lighter rounded-r-none h-6"
+                        onClick={() => handler(id, "decrement")}>
                         -
                     </Button>
-                    <Button className="rounded-xl bg-primary/20 hover:bg-primary/30 mix-blend-plus-lighter rounded-l-none h-6">
+                    <Button
+                        onClick={() => handler(id, "increment")}
+                        className="rounded-xl bg-primary/20 hover:bg-primary/30 mix-blend-plus-lighter rounded-l-none h-6">
                         +
                     </Button>
                 </div>
@@ -209,31 +273,6 @@ const Content = ({ children, className }: { children: React.ReactNode; className
     );
 };
 
-const Input = ({
-    name,
-    htmlFor,
-    placeholder,
-    type,
-}: {
-    name: string;
-    htmlFor: string;
-    placeholder: string;
-    type: string;
-}) => {
-    return (
-        <label htmlFor={htmlFor} className="relative w-full max-w-[90%]">
-            <RadixInput
-                type={type}
-                name={name}
-                id={htmlFor}
-                placeholder={placeholder}
-                className="bg-grey text-white placeholder:text-white rounded-full h-10"
-            />
-            <PlusIcon size={18} className="text-white rotate-45 absolute top-1/2 right-2 transform -translate-y-1/2" />
-        </label>
-    );
-};
-
 const Box = ({ children, as }: { children: React.ReactNode; as: "form" | "div" }) => {
     return (
         <>
@@ -243,16 +282,6 @@ const Box = ({ children, as }: { children: React.ReactNode; as: "form" | "div" }
                 <div className="flex flex-col justify-evenly px-6 grow items-center gap-5">{children}</div>
             )}
         </>
-    );
-};
-
-const Button = ({ children, className }: { children: React.ReactNode; className?: string }) => {
-    return (
-        <RadixButton
-            className={cn("bg-dark-secondary text-white py-2 px-4 rounded-3xl w-fit", className)}
-            onClick={console.log}>
-            {children}
-        </RadixButton>
     );
 };
 
