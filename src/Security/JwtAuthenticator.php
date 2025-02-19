@@ -17,16 +17,10 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface;
 
-/**
- * @see https://symfony.com/doc/current/security/custom_authenticator.html
- */
 class JwtAuthenticator extends AbstractAuthenticator implements AuthenticationEntryPointInterface
 {
-    /**
-     * Called on every request to decide if this authenticator should be
-     * used for the request. Returning `false` will cause this authenticator
-     * to be skipped.
-     */
+    public function __construct(private string $appSecret) {}
+
     public function supports(Request $request): ?bool
     {
         return $request->cookies->has('access_token');
@@ -41,7 +35,7 @@ class JwtAuthenticator extends AbstractAuthenticator implements AuthenticationEn
         }
 
         try {
-            $data = (array) JWT::decode($accessToken, new Key($_ENV['JWT_SECRET'], 'HS256'));
+            $data = (array) JWT::decode($accessToken, new Key($this->appSecret, 'HS256'));
             if (empty($data['user_id'])) {
                 throw new CustomUserMessageAuthenticationException('Données de token invalides.');
             }

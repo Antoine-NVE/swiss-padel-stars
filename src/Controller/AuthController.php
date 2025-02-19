@@ -10,7 +10,6 @@ use App\Response\StandardJsonResponse;
 use App\Service\AccessTokenCookieManager;
 use App\Service\RefreshTokenCookieManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping\Entity;
 use Firebase\JWT\JWT;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -59,7 +58,7 @@ class AuthController extends AbstractController
                 'iat' => time(),
                 'exp' => time() + 3600
             ],
-            $_ENV['JWT_SECRET'],
+            $this->getParameter('app.secret'),
             'HS256'
         );
 
@@ -108,7 +107,7 @@ class AuthController extends AbstractController
         $user = $userRepository->findOneBy(['email' => $email]);
 
         if (!$user || !$passwordHasher->isPasswordValid($user, $password)) {
-            return new JsonResponse(['error' => 'Identifiants invalides'], 401);
+            return StandardJsonResponse::error('Identifiants invalides', null, 401);
         }
 
         $accessToken = JWT::encode(
@@ -117,7 +116,7 @@ class AuthController extends AbstractController
                 'iat' => time(),
                 'exp' => time() + 3600
             ],
-            $_ENV['JWT_SECRET'],
+            $this->getParameter('app.secret'),
             'HS256'
         );
 
@@ -164,7 +163,7 @@ class AuthController extends AbstractController
                 'iat' => time(),
                 'exp' => time() + 3600
             ],
-            $_ENV['JWT_SECRET'],
+            $this->getParameter('app.secret'),
             'HS256'
         );
 
