@@ -12,12 +12,12 @@ class AccessTokenCookieManager
             'access_token',
             $token,
             time() + $ttl, // TTL positif pour créer, négatif pour supprimer
-            '/',
-            null,
-            true,          // Secure
-            true,          // HttpOnly
-            false,         // Raw
-            'Strict'       // SameSite
+            '/', // Path
+            null, // Domain
+            false, // Secure
+            true, // HttpOnly
+            false, // Raw
+            'Strict' // SameSite
         );
     }
 
