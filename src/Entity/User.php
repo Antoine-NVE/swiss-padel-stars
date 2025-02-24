@@ -36,8 +36,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var string The hashed password
      */
-    #[ORM\Column]
-    #[Assert\Length(min: 8)]
+    #[ORM\Column(nullable: true)]
+    #[Assert\Length(min: 8, groups: ['Registration'])]
     private ?string $password = null;
 
     /**
@@ -46,12 +46,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: RefreshToken::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $refreshTokens;
 
-    #[ORM\Column(length: 255)]
-    #[Assert\Length(min: 3)]
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Length(min: 3, groups: ['Registration'])]
     private ?string $lastName = null;
 
-    #[ORM\Column(length: 255)]
-    #[Assert\Length(min: 3)]
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Length(min: 3, groups: ['Registration'])]
     private ?string $firstName = null;
 
     #[ORM\Column(length: 255, nullable: true)]

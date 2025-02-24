@@ -20,7 +20,15 @@ class ProfileController extends AbstractController
 
         return StandardJsonResponse::success('Utilisateur récupéré', [
             'email' => $user->getEmail(),
+            'lastName' => $user->getLastName(),
+            'firstName' => $user->getFirstName(),
+            'company' => $user->getCompany(),
+            'newsletterOptin' => $user->isNewsletterOptin(),
+            'isVerified' => $user->isVerified(),
+            'isAnonymous' => $user->isAnonymous(),
             'roles' => $user->getRoles(),
+            'createdAt' => $user->getCreatedAt(),
+            'updatedAt' => $user->getUpdatedAt()
         ], 200);
     }
 }

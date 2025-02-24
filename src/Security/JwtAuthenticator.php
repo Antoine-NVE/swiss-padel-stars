@@ -4,6 +4,7 @@ namespace App\Security;
 
 use App\Response\StandardJsonResponse;
 use App\Service\AccessTokenCookieManager;
+use App\Service\AccessTokenJwtService;
 use Exception;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -35,7 +36,8 @@ class JwtAuthenticator extends AbstractAuthenticator implements AuthenticationEn
         $accessToken = $request->cookies->get('access_token');
 
         try {
-            $data = (array) JWT::decode($accessToken, new Key($this->appSecret, 'HS256'));
+            $accessTokenJwtService = new AccessTokenJwtService($this->appSecret);
+            $data = $accessTokenJwtService->decode($accessToken);
             if (empty($data['user_id'])) {
                 throw new CustomUserMessageAuthenticationException('Données de token invalides.');
             }

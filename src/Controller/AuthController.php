@@ -8,6 +8,7 @@ use App\Repository\RefreshTokenRepository;
 use App\Repository\UserRepository;
 use App\Response\StandardJsonResponse;
 use App\Service\AccessTokenCookieManager;
+use App\Service\AccessTokenJwtService;
 use App\Service\RefreshTokenCookieManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Firebase\JWT\JWT;
@@ -48,7 +49,7 @@ class AuthController extends AbstractController
         }
 
         // On vient vérifier les contraintes de validation (NotBlank, Length, UniqueEntity, etc.)
-        $errors = $validator->validate($user);
+        $errors = $validator->validate($user, null, 'Registration');
         if (count($errors) > 0) {
             $errorMessages = [];
             foreach ($errors as $error) {
@@ -60,15 +61,11 @@ class AuthController extends AbstractController
         $user->setPassword($passwordHasher->hashPassword($user, $password));
         $entityManager->persist($user);
 
-        $accessToken = JWT::encode(
-            [
-                'user_id' => $user->getId(),
-                'iat' => time(),
-                'exp' => time() + 3600
-            ],
-            $this->getParameter('app.secret'),
-            'HS256'
-        );
+        // On fait un premier flush pour pouvoir récupérer son ID pour le JWT
+        $entityManager->flush();
+
+        $accessTokenJwtService = new AccessTokenJwtService($this->getParameter('app.secret'));
+        $accessToken = $accessTokenJwtService->encode($user->getId());
 
         $randomToken = bin2hex(random_bytes(32));
 
@@ -118,15 +115,8 @@ class AuthController extends AbstractController
             return StandardJsonResponse::error('Identifiants invalides', null, 401);
         }
 
-        $accessToken = JWT::encode(
-            [
-                'user_id' => $user->getId(),
-                'iat' => time(),
-                'exp' => time() + 3600
-            ],
-            $this->getParameter('app.secret'),
-            'HS256'
-        );
+        $accessTokenJwtService = new AccessTokenJwtService($this->getParameter('app.secret'));
+        $accessToken = $accessTokenJwtService->encode($user->getId());
 
         $randomToken = bin2hex(random_bytes(32));
 
@@ -173,15 +163,8 @@ class AuthController extends AbstractController
             return $response;
         }
 
-        $accessToken = JWT::encode(
-            [
-                'user_id' => $refreshToken->getUser()->getId(),
-                'iat' => time(),
-                'exp' => time() + 3600
-            ],
-            $this->getParameter('app.secret'),
-            'HS256'
-        );
+        $accessTokenJwtService = new AccessTokenJwtService($this->getParameter('app.secret'));
+        $accessToken = $accessTokenJwtService->encode($refreshToken->getUser()->getId());
 
         $refreshToken->setExpiresAt(new \DateTimeImmutable('+1 month'));
         $entityManager->flush();
