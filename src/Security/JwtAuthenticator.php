@@ -3,6 +3,7 @@
 namespace App\Security;
 
 use App\Response\StandardJsonResponse;
+use App\Service\AccessTokenCookieManager;
 use Exception;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -19,7 +20,10 @@ use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface
 
 class JwtAuthenticator extends AbstractAuthenticator implements AuthenticationEntryPointInterface
 {
-    public function __construct(private string $appSecret) {}
+    public function __construct(
+        private string $appSecret,
+        private AccessTokenCookieManager $accessTokenCookieManager
+    ) {}
 
     public function supports(Request $request): ?bool
     {
@@ -29,10 +33,6 @@ class JwtAuthenticator extends AbstractAuthenticator implements AuthenticationEn
     public function authenticate(Request $request): Passport
     {
         $accessToken = $request->cookies->get('access_token');
-
-        if (empty($accessToken)) {
-            throw new CustomUserMessageAuthenticationException('Token manquant ou vide.');
-        }
 
         try {
             $data = (array) JWT::decode($accessToken, new Key($this->appSecret, 'HS256'));
@@ -53,11 +53,15 @@ class JwtAuthenticator extends AbstractAuthenticator implements AuthenticationEn
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
-        return StandardJsonResponse::error('Échec de l\'authentification', null, 401, [
+        $response = StandardJsonResponse::error('Échec de l\'authentification', null, 401, [
             'message' => $exception->getMessage(),
             'file' => $exception->getFile(),
             'line' => $exception->getLine(),
         ]);
+
+        $response->headers->setCookie($this->accessTokenCookieManager->deleteCookie());
+
+        return $response;
     }
 
     public function start(Request $request, AuthenticationException $authException = null): Response

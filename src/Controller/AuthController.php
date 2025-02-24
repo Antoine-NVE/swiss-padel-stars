@@ -32,12 +32,20 @@ class AuthController extends AbstractController
     ): JsonResponse {
         $data = json_decode($request->getContent(), true);
 
-        $email = $data['email'] ?? null;
-        $password = $data['password'] ?? null;
+        $email = $data['email'] ?? '';
+        $password = $data['password'] ?? '';
+        $lastName = $data['lastName'] ?? '';
+        $firstName = $data['firstName'] ?? '';
+        $company = $data['company'] ?? '';
 
         $user = new User();
         $user->setEmail($email);
         $user->setPassword($password);
+        $user->setLastName($lastName);
+        $user->setFirstName($firstName);
+        if ($company) {
+            $user->setCompany($company);
+        }
 
         // On vient vérifier les contraintes de validation (NotBlank, Length, UniqueEntity, etc.)
         $errors = $validator->validate($user);
@@ -66,7 +74,7 @@ class AuthController extends AbstractController
 
         $refreshToken = new RefreshToken();
         $refreshToken->setToken($randomToken);
-        $refreshToken->setExpiration(new \DateTimeImmutable('+1 month'));
+        $refreshToken->setExpiresAt(new \DateTimeImmutable('+1 month'));
         $refreshToken->setUser($user);
         $entityManager->persist($refreshToken);
 
@@ -90,18 +98,18 @@ class AuthController extends AbstractController
     ): JsonResponse {
         $data = json_decode($request->getContent(), true);
 
-        $email = $data['email'] ?? null;
-        $password = $data['password'] ?? null;
+        $email = $data['email'] ?? '';
+        $password = $data['password'] ?? '';
 
-        $errors = [];
+        $errorsMessages = [];
         if (!$email) {
-            $errors['email'] = 'L\'email est requis.';
+            $errorsMessages['email'] = 'L\'email est requis.';
         }
         if (!$password) {
-            $errors['password'] = 'Le mot de passe est requis.';
+            $errorsMessages['password'] = 'Le mot de passe est requis.';
         }
-        if (count($errors) > 0) {
-            return StandardJsonResponse::error('Une erreur est survenue.', $errors, 400);
+        if (count($errorsMessages) > 0) {
+            return StandardJsonResponse::error('Une erreur est survenue.', $errorsMessages, 400);
         }
 
         $user = $userRepository->findOneBy(['email' => $email]);
@@ -124,7 +132,7 @@ class AuthController extends AbstractController
 
         $refreshToken = new RefreshToken();
         $refreshToken->setToken($randomToken);
-        $refreshToken->setExpiration(new \DateTimeImmutable('+1 month'));
+        $refreshToken->setExpiresAt(new \DateTimeImmutable('+1 month'));
         $refreshToken->setUser($user);
 
         $entityManager->persist($refreshToken);
@@ -148,13 +156,21 @@ class AuthController extends AbstractController
         $refreshToken = $request->cookies->get('refresh_token');
 
         if (!$refreshToken) {
-            return StandardJsonResponse::error('Token invalide', null, 401);
+            return StandardJsonResponse::error('Token invalide', null, 401, [
+                'message' => 'Token de refresh non trouvé dans les cookies'
+            ]);
         }
 
+        /** @var \App\Entity\RefreshToken $refreshToken  */
         $refreshToken = $refreshTokenRepository->findOneBy(['token' => $refreshToken]);
 
-        if (!$refreshToken || $refreshToken->getExpiration() < new \DateTimeImmutable()) {
-            return StandardJsonResponse::error('Token invalide', null, 401);
+        if (!$refreshToken || $refreshToken->getExpiresAt() < new \DateTimeImmutable()) {
+            $response = StandardJsonResponse::error('Token invalide', null, 401, [
+                'message' => 'Token de refresh non trouvé en BDD ou expiré'
+            ]);
+            $response->headers->setCookie($refreshTokenCookieManager->deleteCookie());
+
+            return $response;
         }
 
         $accessToken = JWT::encode(
@@ -167,7 +183,7 @@ class AuthController extends AbstractController
             'HS256'
         );
 
-        $refreshToken->setExpiration(new \DateTimeImmutable('+1 month'));
+        $refreshToken->setExpiresAt(new \DateTimeImmutable('+1 month'));
         $entityManager->flush();
 
         $response = StandardJsonResponse::success('Token rafraîchi');
