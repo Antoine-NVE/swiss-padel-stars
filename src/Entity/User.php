@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -45,10 +46,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: RefreshToken::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $refreshTokens;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 255)]
+    #[Assert\Length(min: 3)]
     private ?string $lastName = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 255)]
+    #[Assert\Length(min: 3)]
     private ?string $firstName = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -93,6 +96,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->contacts = new ArrayCollection();
         $this->userAdresses = new ArrayCollection();
         $this->carts = new ArrayCollection();
+
+        $this->createdAt = new DateTimeImmutable();
+        $this->isVerified = false;
+        $this->newsletterOptin = false;
+        $this->isAnonymous = false;
     }
 
     public function getId(): ?int
@@ -205,7 +213,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->lastName;
     }
 
-    public function setLastName(?string $lastName): static
+    public function setLastName(string $lastName): static
     {
         $this->lastName = $lastName;
 
@@ -217,7 +225,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->firstName;
     }
 
-    public function setFirstName(?string $firstName): static
+    public function setFirstName(string $firstName): static
     {
         $this->firstName = $firstName;
 
