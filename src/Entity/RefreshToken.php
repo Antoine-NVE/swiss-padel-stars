@@ -17,7 +17,7 @@ class RefreshToken
     private ?string $token = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $expiration = null;
+    private ?\DateTimeImmutable $expiresAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'refreshTokens')]
     #[ORM\JoinColumn(nullable: false)]
@@ -40,14 +40,14 @@ class RefreshToken
         return $this;
     }
 
-    public function getExpiration(): ?\DateTimeImmutable
+    public function getExpiresAt(): ?\DateTimeImmutable
     {
-        return $this->expiration;
+        return $this->expiresAt;
     }
 
-    public function setExpiration(\DateTimeImmutable $expiration): static
+    public function setExpiresAt(\DateTimeImmutable $expiresAt): static
     {
-        $this->expiration = $expiration;
+        $this->expiresAt = $expiresAt;
 
         return $this;
     }
