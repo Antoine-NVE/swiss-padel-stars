@@ -11,7 +11,6 @@ use App\Service\AccessTokenCookieManager;
 use App\Service\AccessTokenJwtService;
 use App\Service\RefreshTokenCookieManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Firebase\JWT\JWT;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -33,20 +32,24 @@ class AuthController extends AbstractController
     ): JsonResponse {
         $data = json_decode($request->getContent(), true);
 
+        // Le setter de l'email n'accepte pas null, il est important de mettre un string vide par défaut
         $email = $data['email'] ?? '';
+
+        // Pour les 3 suivants, on met un string vide même si ça marcherait avec null
+        // Ces 3 valeurs sont obligatoires donc le validator bloquera que ce soit null ou un string vide
         $password = $data['password'] ?? '';
         $lastName = $data['lastName'] ?? '';
         $firstName = $data['firstName'] ?? '';
-        $company = $data['company'] ?? '';
+
+        // On met null car la valeur n'est pas obligatoire, c'est la valeur qui sera stockée en BDD
+        $company = $data['company'] ?? null;
 
         $user = new User();
         $user->setEmail($email);
         $user->setPassword($password);
         $user->setLastName($lastName);
         $user->setFirstName($firstName);
-        if ($company) {
-            $user->setCompany($company);
-        }
+        $user->setCompany($company);
 
         // On vient vérifier les contraintes de validation (NotBlank, Length, UniqueEntity, etc.)
         $errors = $validator->validate($user, null, 'Registration');

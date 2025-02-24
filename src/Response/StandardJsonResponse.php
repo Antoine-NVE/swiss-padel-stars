@@ -6,7 +6,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class StandardJsonResponse extends JsonResponse
 {
-    public function __construct(string $message, ?array $data = null, ?array $errors = null, int $status = 200, array $debug = [], array $headers = [])
+    private function __construct(string $message, ?array $data = null, ?array $errors = null, int $status = 200, array $debug = [], array $headers = [])
     {
         $response = [
             'message' => $message,
