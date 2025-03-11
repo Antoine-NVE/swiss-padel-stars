@@ -30,6 +30,9 @@ class AuthController extends AbstractController
         AccessTokenCookieManager $accessTokenCookieManager,
         RefreshTokenCookieManager $refreshTokenCookieManager
     ): JsonResponse {
+        // TODO: Vérifier que l'utilisateur n'est pas déjà connecté
+        // TODO: Vérifier que l'utilisateur n'est pas déjà inscrit (en anonyme)
+
         $data = json_decode($request->getContent(), true);
 
         // Le setter de l'email n'accepte pas null, il est important de mettre un string vide par défaut
