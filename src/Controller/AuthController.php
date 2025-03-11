@@ -52,7 +52,7 @@ class AuthController extends AbstractController
         $user->setCompany($company);
 
         // On vient vérifier les contraintes de validation (NotBlank, Length, UniqueEntity, etc.)
-        $errors = $validator->validate($user, null, 'Registration');
+        $errors = $validator->validate($user, null, ['Default', 'Registration']);
         if (count($errors) > 0) {
             $errorMessages = [];
             foreach ($errors as $error) {
