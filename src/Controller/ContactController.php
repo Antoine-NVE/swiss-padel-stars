@@ -106,4 +106,19 @@ class ContactController extends AbstractController
 
         return StandardJsonResponse::success('Votre message a bien été envoyé', null, 200);
     }
+
+    #[Route('/types', name: 'types', methods: ['GET'])]
+    public function types(ContactTypeRepository $contactTypeRepository): JsonResponse
+    {
+        $contactTypesEntities = $contactTypeRepository->findAll();
+        $contactTypes = [];
+        foreach ($contactTypesEntities as $contactType) {
+            $contactTypes[] = [
+                'id' => $contactType->getId(),
+                'type' => $contactType->getType(),
+            ];
+        }
+
+        return StandardJsonResponse::success('Liste des types de contact', $contactTypes, 200);
+    }
 }
