@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\ContactRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ContactRepository::class)]
 class Contact
@@ -19,6 +20,7 @@ class Contact
 
     #[ORM\ManyToOne(inversedBy: 'contacts')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotBlank()]
     private ?ContactType $contactType = null;
 
     #[ORM\ManyToOne(inversedBy: 'contacts')]
@@ -26,7 +28,13 @@ class Contact
     private ?User $user = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Assert\Length(min: 10)]
     private ?string $message = null;
+
+    public function __construct()
+    {
+        $this->createdAt = new \DateTimeImmutable();
+    }
 
     public function getId(): ?int
     {

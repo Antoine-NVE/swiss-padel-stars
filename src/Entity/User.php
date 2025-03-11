@@ -47,11 +47,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $refreshTokens;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Assert\Length(min: 3, groups: ['Registration'])]
+    #[Assert\Length(min: 3, groups: ['Registration', 'Contact'])]
     private ?string $lastName = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Assert\Length(min: 3, groups: ['Registration'])]
+    #[Assert\Length(min: 3, groups: ['Registration', 'Contact'])]
     private ?string $firstName = null;
 
     #[ORM\Column(length: 255, nullable: true)]
