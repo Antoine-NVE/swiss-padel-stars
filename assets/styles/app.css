@@ -49,6 +49,32 @@
     }
 
     body {
-        @apply font-sans antialiased;
+        @apply font-sans antialiased overflow-x-hidden;
+    }
+}
+
+@layer utilities {
+    .transition-all {
+        transition-property: all;
+    }
+    .duration-500 {
+        transition-duration: 500ms;
+    }
+    .ease-out {
+        transition-timing-function: ease-out;
+    }
+
+    *:has(> img) {
+        overflow: hidden;
+        @apply ease-out transition-all duration-500;
+
+        img {
+            @apply ease-out transition-all duration-500;
+        }
+
+        img:hover {
+            @apply ease-out transition-all duration-500;
+            transform: scale(1.2);
+        }
     }
 }

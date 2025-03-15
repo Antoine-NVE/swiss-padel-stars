@@ -1,4 +1,5 @@
 import React from "react";
+import { useIntersectionObserver } from "../hooks";
 import { type ImgProps } from "../types";
 import { cn } from "../utils";
 
@@ -20,6 +21,9 @@ type ArticleProps = {
  * la propriété direction permet de spécifier l'ordre de présentation
  */
 export const Article = ({ img, btn, description, subTitle, title, direction, children }: ArticleProps) => {
+    const [articleRef, isVisible] = useIntersectionObserver();
+    const textDirection = direction === "ltr" ? "translate-x-6" : "-translate-x-6";
+
     if (Array.isArray(img) && img.length > 2) {
         throw new Error("More than 2 images is not implemented yet !");
     }
@@ -30,15 +34,24 @@ export const Article = ({ img, btn, description, subTitle, title, direction, chi
 
     return (
         <article
+            ref={articleRef}
             className={cn(
-                /* .wrapper est initialisé à la volée */
                 "flex center justify-around [&_.wrapper]:w-[500px]",
                 direction === "ltr" && "flex-row-reverse"
             )}>
-            <div className="wrapper">
+            <div
+                className={cn(
+                    "wrapper transition-all duration-700 ease-out",
+                    isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+                )}>
                 <ArticleImage img={img} />
             </div>
-            <div className="wrapper flex flex-col items-center justify-around">
+            <div
+                className={cn(
+                    "wrapper flex flex-col items-center justify-around",
+                    "transition-all duration-700 ease-out delay-200",
+                    isVisible ? "opacity-100 translate-x-0" : `opacity-0 ${textDirection}`
+                )}>
                 {subTitle ? (
                     /* si un sous-titre est fourni */
                     <div className="flex flex-col justify-start items-center gap-2 text-left w-full">
