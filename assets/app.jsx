@@ -10,6 +10,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./styles/app.css";
 import React from "react";
 import { createRoot } from "react-dom/client";
+import Profile from "./pages/profile.tsx"
 
 
 /**
@@ -51,6 +52,12 @@ const links = [
         label: "Produits",
         href: "produits",
         Page: Produits,
+        available: true,
+    },
+    {
+        label: "Profil",
+        href: "profil",
+        Page: Profile,
         available: true,
     },
 ];

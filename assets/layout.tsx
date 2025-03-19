@@ -1,7 +1,8 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Outlet } from "react-router-dom";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
+import { AuthProvider } from "./hooks/auth-context";
 import { NavLink } from "./types";
 //
 
@@ -22,16 +23,15 @@ import { NavLink } from "./types";
  * ```
  */
 export default function Layout({ links }: { links: NavLink[] }) {
-    useEffect(() => {
-        console.log("Layout monté");
-    }, []);
     return (
         <>
-            <Header links={links} />
-            <main className="relative w-screen flex flex-col min-h-screen overflow-x-hidden grow bg-dark-primary space-y-10">
-                <Outlet />
-            </main>
-            <Footer />
+            <AuthProvider>
+                <Header links={links} />
+                <main className="relative w-screen flex flex-col min-h-screen overflow-x-hidden grow bg-dark-primary space-y-10">
+                    <Outlet />
+                </main>
+                <Footer />
+            </AuthProvider>
         </>
     );
 }

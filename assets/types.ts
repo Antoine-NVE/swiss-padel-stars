@@ -22,6 +22,26 @@ export type APIResponse = {
     REGISTER_SUCCESS: {
         message: string;
     };
+    USER_PROFILE: {
+        email: string;
+        lastName: string;
+        firstName: string;
+        company: string | null;
+        newsletterOptin: boolean;
+        isVerified: boolean;
+        isAnonymous: boolean;
+        roles: string[];
+        createdAt: {
+            date: string;
+            timezone_type: number;
+            timezone: string;
+        };
+        updatedAt: {
+            date: string;
+            timezone_type: number;
+            timezone: string;
+        } | null;
+    };
 };
 
 export type APIResponseType<T> = {

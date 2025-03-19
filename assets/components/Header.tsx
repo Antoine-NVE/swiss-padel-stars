@@ -1,6 +1,7 @@
 import { MenuIcon, ShoppingCartIcon, UserIcon } from "lucide-react";
-import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/auth-context";
 import type { CartProductType, NavLink as NavLinkType } from "../types";
 import { calcPriceFromString, cn } from "../utils";
 import { Input } from "./Input";
@@ -16,6 +17,11 @@ import {
 import Spacer from "./ui/spacer";
 
 const ICON_SIZE = 38;
+const endpoints = {
+    register: "/api/auth/register",
+    login: "/api/auth/login",
+    profile: "/api/profile/user",
+};
 
 // --
 // Le header ( Header ) est en 3 parties :
@@ -53,34 +59,146 @@ const Nav = ({ links }: { links: NavLinkType[] }) => {
  * Auth forms
  */
 const AuthSection = ({ Icon }: { Icon: React.ReactNode }) => {
+    const { login, user, logout } = useAuth();
+
+    const navigate = useNavigate();
+
+    const handleProfileData = async () => {
+        const response = await fetch(endpoints.profile);
+
+        if (response.ok) {
+            login(await response.json());
+            return;
+        }
+    };
+
+    useEffect(() => {
+        handleProfileData();
+    }, []);
+
+    const handleRegisterSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        const formData = new FormData(e.currentTarget);
+        const data = Object.fromEntries(formData.entries());
+
+        const response = await fetch(endpoints.register, {
+            method: "POST",
+            body: JSON.stringify(data),
+        });
+
+        console.log(response);
+        console.log(await response.json());
+
+        if (response.status === 201) {
+            handleProfileData();
+            prompt("Vous êtes inscrit !");
+            return;
+        }
+
+        prompt("L'inscription n'a pas réussi");
+    };
+
+    const handleLoginSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        const formData = new FormData(e.currentTarget);
+        const data = Object.fromEntries(formData.entries());
+
+        const response = await fetch(endpoints.login, {
+            method: "POST",
+            body: JSON.stringify(data),
+        });
+
+        const json = await response.json();
+        console.log(response);
+        console.log(json);
+
+        if (response.status === 200) {
+            handleProfileData();
+            prompt("Vous êtes connecté !");
+        }
+
+        prompt("La connexion n'a pas réussi");
+    };
+
+    const handleLogout = () => {
+        logout();
+        navigate("/");
+    };
+
     return (
         <DropdownMenu>
-            <DropdownMenuTrigger className="text-secondary">{Icon}</DropdownMenuTrigger>
+            <DropdownMenuTrigger className="text-secondary">
+                <div className="relative">
+                    {Icon}
+                    <svg
+                        width="25"
+                        height="25"
+                        viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="absolute bottom-0 right-0 opacity-90">
+                        <circle cx="15" cy="15" r="5" fill={user ? "green" : "red"} />
+                    </svg>
+                </div>
+            </DropdownMenuTrigger>
             <Content>
-                <SubTitle>
-                    <h3>Connection</h3>
-                </SubTitle>
-                <Box as="form">
-                    <Input name="email" htmlFor="login-email" placeholder="Adresse email.." type="email" />
-                    <Input name="password" htmlFor="login-password" placeholder="Mot de passe.." type="password" />
-                    <Button>Validé</Button>
-                </Box>
+                {!user ? (
+                    <>
+                        <SubTitle>
+                            <h3>Connexion</h3>
+                        </SubTitle>
+
+                        <Box as="form" onSubmit={handleLoginSubmit}>
+                            <Input name="email" htmlFor="login-email" placeholder="Adresse email.." type="email" />
+                            <Input
+                                name="password"
+                                htmlFor="login-password"
+                                placeholder="Mot de passe.."
+                                type="password"
+                            />
+                            <Button>Valider</Button>
+                        </Box>
+                    </>
+                ) : (
+                    <Button onClick={handleLogout}>Se déconnecter</Button>
+                )}
                 <DropdownMenuSeparator />
-                <SubTitle>
-                    <h3>Inscription</h3>
-                </SubTitle>
-                <Box as="form">
-                    <Input name="company" htmlFor="register-company" placeholder="Nom de l'entreprise.." type="text" />
-                    <Input name="email" htmlFor="register-email" placeholder="Adresse email.." type="email" />
-                    <Input name="password" htmlFor="register-password" placeholder="Mot de passe.." type="password" />
-                    <Input
-                        name="confirm-password"
-                        htmlFor="register-confirm-password"
-                        placeholder="Confirmer mot de passe.."
-                        type="password"
-                    />
-                    <Button>Validé</Button>
-                </Box>
+                {!user ? (
+                    <>
+                        <SubTitle>
+                            <h3>Inscription</h3>
+                        </SubTitle>
+                        <Box as="form" onSubmit={handleRegisterSubmit}>
+                            <Input
+                                name="company"
+                                htmlFor="register-company"
+                                placeholder="Nom de l'entreprise.."
+                                type="text"
+                            />
+                            <Input name="lastName" htmlFor="register-lastname" placeholder="Nom" type="text" />
+                            <Input name="firstName" htmlFor="register-firstname" placeholder="Prenom" type="text" />
+                            <Input name="email" htmlFor="register-email" placeholder="Adresse email.." type="email" />
+                            <Input
+                                name="password"
+                                htmlFor="register-password"
+                                placeholder="Mot de passe.."
+                                type="password"
+                            />
+                            <Input
+                                name="confirm-password"
+                                htmlFor="register-confirm-password"
+                                placeholder="Confirmer mot de passe.."
+                                type="password"
+                            />
+                            <Button>Valider</Button>
+                        </Box>
+                    </>
+                ) : (
+                    <Button>
+                        <NavLink to={"/profil"}>Voir mon profil</NavLink>
+                    </Button>
+                )}
             </Content>
         </DropdownMenu>
     );
@@ -274,11 +392,21 @@ const Content = ({ children, className }: { children: React.ReactNode; className
     );
 };
 
-const Box = ({ children, as }: { children: React.ReactNode; as: "form" | "div" }) => {
+const Box = ({
+    children,
+    as,
+    onSubmit,
+}: {
+    children: React.ReactNode;
+    as: "form" | "div";
+    onSubmit?: (data: any) => void;
+}) => {
     return (
         <>
             {as === "form" ? (
-                <form className="flex flex-col justify-evenly px-6 grow items-center gap-5">{children}</form>
+                <form onSubmit={onSubmit} className="flex flex-col justify-evenly px-6 grow items-center gap-5">
+                    {children}
+                </form>
             ) : (
                 <div className="flex flex-col justify-evenly px-6 grow items-center gap-5">{children}</div>
             )}
