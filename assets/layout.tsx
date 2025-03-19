@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { Outlet } from "react-router-dom";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
 import { NavLink } from "./types";
@@ -20,12 +21,15 @@ import { NavLink } from "./types";
  *
  * ```
  */
-export default function Layout({ children, links }: { children: React.ReactNode; links: NavLink[] }) {
+export default function Layout({ links }: { links: NavLink[] }) {
+    useEffect(() => {
+        console.log("Layout monté");
+    }, []);
     return (
         <>
             <Header links={links} />
             <main className="relative w-screen flex flex-col min-h-screen overflow-x-hidden grow bg-dark-primary space-y-10">
-                {children}
+                <Outlet />
             </main>
             <Footer />
         </>

@@ -6,10 +6,12 @@ import Infrastructure from "./pages/infrastructure.tsx";
 import Partenariat from "./pages/partenariat.tsx";
 import Produits from "./pages/produits.tsx";
 import Layout from "./layout.tsx";
-import { BrowserRouter, Outlet, Route, Routes } from "react-router";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./styles/app.css";
 import React from "react";
 import { createRoot } from "react-dom/client";
+
+
 /**
  * intra-website navigation
  * @type {{label : string ; href: string ; available : boolean ; Page: () => React.JSX.Element;}[]}
@@ -61,15 +63,14 @@ if (rootElement) {
         <React.StrictMode>
             <BrowserRouter>
                 <Routes>
-                    <Route
+                    <Route 
                         element={
-                            <Layout links={links}>
-                                <Outlet />
-                            </Layout>
+                            <Layout links={links} />
                         }>
                         {links.map(({ Page, href, label, available }) =>
-                            available ? <Route key={label} path={href} index={href === ""} element={<Page />} /> : null
+                         available ? <Route key={label} path={href === "/" ? "/" : `${href}`} element={<Page />} /> : null
                         )}
+                        <Route path="test" element={<h1>Test Page</h1>} />
                     </Route>
                 </Routes>
             </BrowserRouter>

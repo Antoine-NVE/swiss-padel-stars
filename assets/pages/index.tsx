@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Article } from "../components/Article";
 import CommunFaq from "../components/CommunFaq";
 import { Hero } from "../components/Hero";
@@ -26,6 +26,9 @@ const articles: { img: ImgProps | ImgProps[]; text: string; btnText: string }[] 
     },
 ];
 export default function Page() {
+    useEffect(() => {
+        console.log("coucou");
+    }, []);
     // articles à afficher
 
     return (

@@ -1,6 +1,7 @@
 import { MenuIcon, ShoppingCartIcon, UserIcon } from "lucide-react";
 import React, { useState } from "react";
-import type { CartProductType, NavLink } from "../types";
+import { NavLink } from "react-router-dom";
+import type { CartProductType, NavLink as NavLinkType } from "../types";
 import { calcPriceFromString, cn } from "../utils";
 import { Input } from "./Input";
 import Logo from "./Logo";
@@ -25,7 +26,7 @@ const ICON_SIZE = 38;
 /**
  * Navigation
  */
-const Nav = ({ links }: { links: NavLink[] }) => {
+const Nav = ({ links }: { links: NavLinkType[] }) => {
     return (
         <nav className="flex center w-1/2">
             <DropdownMenu>
@@ -37,7 +38,7 @@ const Nav = ({ links }: { links: NavLink[] }) => {
                         <div
                             key={link.label}
                             className="grow text-secondary font-medium text-xl hover:bg-primary/90 hover:[&_a]:underline p-2">
-                            <a href={link.href}>{link.label}</a>
+                            <NavLink to={link.href}>{link.label}</NavLink>
                         </div>
                     ))}
                 </Content>
@@ -191,7 +192,7 @@ const CartSection = ({ title, Icon }: { title: string; Icon: React.ReactNode }) 
 /**
  * MAIN COMPONENT HEADER
  */
-export default function Header({ links }: { links: NavLink[] }) {
+export default function Header({ links }: { links: NavLinkType[] }) {
     return (
         <header className="absolute flex items-center justify-around w-screen bg-primary/90 py-4 px-4 z-50 h-24">
             <div className="w-full flex justify-between items-center">
