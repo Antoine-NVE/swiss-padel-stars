@@ -28,11 +28,9 @@ class AuthController extends AbstractController
         UserPasswordHasherInterface $passwordHasher,
         ValidatorInterface $validator,
         AccessTokenCookieManager $accessTokenCookieManager,
-        RefreshTokenCookieManager $refreshTokenCookieManager
+        RefreshTokenCookieManager $refreshTokenCookieManager,
+        UserRepository $userRepository,
     ): JsonResponse {
-        // TODO: Vérifier que l'utilisateur n'est pas déjà connecté
-        // TODO: Vérifier que l'utilisateur n'est pas déjà inscrit (en anonyme)
-
         $data = json_decode($request->getContent(), true);
 
         // Le setter de l'email n'accepte pas null, il est important de mettre un string vide par défaut
@@ -47,8 +45,17 @@ class AuthController extends AbstractController
         // On met null car la valeur n'est pas obligatoire, c'est la valeur qui sera stockée en BDD
         $company = $data['company'] ?? null;
 
-        $user = new User();
-        $user->setEmail($email);
+        // On vérifie si l'utilisateur n'est pas déjà inscrit en anonyme (newsletter par exemple)
+        /** @var \App\Entity\User $user */
+        $user = $userRepository->findOneBy(['email' => $email, 'isAnonymous' => true]);
+        if (!$user) {
+            $user = new User();
+            $user->setEmail($email);
+        } else {
+            $user->setUpdatedAt(new \DateTimeImmutable());
+        }
+
+        $user->setAnonymous(false);
         $user->setPassword($password);
         $user->setLastName($lastName);
         $user->setFirstName($firstName);
