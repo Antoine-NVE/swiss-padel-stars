@@ -107,7 +107,7 @@ class UserController extends AbstractController
         $data = json_decode($request->getContent(), true);
 
         $errorMessages = [];
-        if (!$passwordHasher->isPasswordValid($user, $data['currentPassword'])) {
+        if (!$passwordHasher->isPasswordValid($user, $data['currentPassword'] ?? '')) {
             $errorMessages['currentPassword'] = 'Le mot de passe actuel est incorrect';
         }
 
@@ -116,6 +116,9 @@ class UserController extends AbstractController
         $errors = $validator->validate($user, null, ['Default', 'Registration']);
         if (count($errors) > 0) {
             $errorMessages['newPassword'] = $errors[0]->getMessage();
+        }
+
+        if (count($errorMessages) > 0) {
             return StandardJsonResponse::error('Une erreur est survenue.', $errorMessages, 400);
         }
 
