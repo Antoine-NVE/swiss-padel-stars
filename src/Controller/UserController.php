@@ -3,8 +3,10 @@
 namespace App\Controller;
 
 use App\Response\StandardJsonResponse;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -34,9 +36,48 @@ class UserController extends AbstractController
 
     #[Route('/update', name: 'update', methods: ['PATCH'])]
     #[IsGranted('ROLE_USER')]
-    public function update(): JsonResponse
+    public function update(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
-        return StandardJsonResponse::error('Non implémenté', [], 501);
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
+        $data = json_decode($request->getContent(), true);
+
+        if (isset($data['email']) && $data['email'] !== $user->getEmail()) {
+            $user->setEmail($data['email']);
+            $user->setVerified(false); // Réinitialiser la vérification si l'email change
+        }
+
+        if (isset($data['firstName'])) {
+            $user->setFirstName($data['firstName']);
+        }
+
+        if (isset($data['lastName'])) {
+            $user->setLastName($data['lastName']);
+        }
+
+        if (isset($data['company'])) {
+            $user->setCompany(trim($data['company']) === '' ? null : $data['company']);
+        }
+
+        if (isset($data['newsletterOptin'])) {
+            $user->setNewsletterOptin($data['newsletterOptin']); // Convertir en booléen
+        }
+
+        $entityManager->flush();
+
+        return StandardJsonResponse::success('Utilisateur mis à jour', [
+            'email' => $user->getEmail(),
+            'lastName' => $user->getLastName(),
+            'firstName' => $user->getFirstName(),
+            'company' => $user->getCompany(),
+            'newsletterOptin' => $user->isNewsletterOptin(),
+            'isVerified' => $user->isVerified(),
+            'isAnonymous' => $user->isAnonymous(),
+            'roles' => $user->getRoles(),
+            'createdAt' => $user->getCreatedAt(),
+            'updatedAt' => $user->getUpdatedAt()
+        ], 200);
     }
 
     #[Route('/delete', name: 'delete', methods: ['DELETE'])]
