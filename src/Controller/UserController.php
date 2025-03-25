@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -88,6 +89,39 @@ class UserController extends AbstractController
             'createdAt' => $user->getCreatedAt(),
             'updatedAt' => $user->getUpdatedAt()
         ], 200);
+    }
+
+    #[Route('/update-password', name: 'update_password', methods: ['PATCH'])]
+    #[IsGranted('ROLE_USER')]
+    public function updatePassword(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        ValidatorInterface $validator,
+        UserPasswordHasherInterface $passwordHasher
+    ): JsonResponse {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
+        $data = json_decode($request->getContent(), true);
+
+        $errorMessages = [];
+        if (!$passwordHasher->isPasswordValid($user, $data['currentPassword'])) {
+            $errorMessages['currentPassword'] = 'Le mot de passe actuel est incorrect';
+        }
+
+        $user->setPassword($data['newPassword']);
+
+        $errors = $validator->validate($user, null, ['Default', 'Registration']);
+        if (count($errors) > 0) {
+            $errorMessages['newPassword'] = $errors[0]->getMessage();
+            return StandardJsonResponse::error('Une erreur est survenue.', $errorMessages, 400);
+        }
+
+        $user->setPassword($passwordHasher->hashPassword($user, $data['newPassword']));
+
+        $entityManager->flush();
+
+        return StandardJsonResponse::success('Mot de passe mis à jour', null, 200);
     }
 
     #[Route('/delete', name: 'delete', methods: ['DELETE'])]
