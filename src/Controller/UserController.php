@@ -93,7 +93,7 @@ class UserController extends AbstractController
         ], 200);
     }
 
-    #[Route('/update-password', name: 'update_password', methods: ['PATCH'])]
+    #[Route('/update-password', name: 'update_password', methods: ['POST'])]
     #[IsGranted('ROLE_USER')]
     public function updatePassword(
         Request $request,
