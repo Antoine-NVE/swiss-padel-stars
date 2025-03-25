@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/api/user', name: 'api_user_')]
 class UserController extends AbstractController
@@ -36,7 +37,7 @@ class UserController extends AbstractController
 
     #[Route('/update', name: 'update', methods: ['PATCH'])]
     #[IsGranted('ROLE_USER')]
-    public function update(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    public function update(Request $request, EntityManagerInterface $entityManager, ValidatorInterface $validator): JsonResponse
     {
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
@@ -62,6 +63,15 @@ class UserController extends AbstractController
 
         if (isset($data['newsletterOptin'])) {
             $user->setNewsletterOptin($data['newsletterOptin']); // Convertir en booléen
+        }
+
+        $errors = $validator->validate($user, null, ['Default', 'Registration']);
+        if (count($errors) > 0) {
+            $errorMessages = [];
+            foreach ($errors as $error) {
+                $errorMessages[$error->getPropertyPath()] = $error->getMessage();
+            }
+            return StandardJsonResponse::error('Une erreur est survenue.', $errorMessages, 400);
         }
 
         $entityManager->flush();
