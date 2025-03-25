@@ -8,12 +8,12 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/api/profile', name: 'api_profile_')]
-class ProfileController extends AbstractController
+#[Route('/api/user', name: 'api_user_')]
+class UserController extends AbstractController
 {
-    #[Route('/user', name: 'user', methods: ['GET'])]
+    #[Route('/me', name: 'me', methods: ['GET'])]
     #[IsGranted('ROLE_USER')]
-    public function index(): JsonResponse
+    public function me(): JsonResponse
     {
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
