@@ -31,4 +31,18 @@ class UserController extends AbstractController
             'updatedAt' => $user->getUpdatedAt()
         ], 200);
     }
+
+    #[Route('/update', name: 'update', methods: ['PATCH'])]
+    #[IsGranted('ROLE_USER')]
+    public function update(): JsonResponse
+    {
+        return StandardJsonResponse::error('Non implémenté', [], 501);
+    }
+
+    #[Route('/delete', name: 'delete', methods: ['DELETE'])]
+    #[IsGranted('ROLE_USER')]
+    public function delete(): JsonResponse
+    {
+        return StandardJsonResponse::error('Non implémenté', [], 501);
+    }
 }
