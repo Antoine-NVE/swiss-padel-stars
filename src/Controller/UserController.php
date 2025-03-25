@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Response\StandardJsonResponse;
+use App\Service\AccessTokenCookieManager;
+use App\Service\RefreshTokenCookieManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -126,8 +128,28 @@ class UserController extends AbstractController
 
     #[Route('/delete', name: 'delete', methods: ['DELETE'])]
     #[IsGranted('ROLE_USER')]
-    public function delete(): JsonResponse
-    {
-        return StandardJsonResponse::error('Non implémenté', [], 501);
+    public function delete(
+        EntityManagerInterface $entityManager,
+        UserPasswordHasherInterface $passwordHasher,
+        Request $request,
+        AccessTokenCookieManager $accessTokenCookieManager,
+        RefreshTokenCookieManager $refreshTokenCookieManager,
+    ): JsonResponse {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+        $data = json_decode($request->getContent(), true);
+
+        if (!$passwordHasher->isPasswordValid($user, $data['password'] ?? '')) {
+            return StandardJsonResponse::error('Une erreur est survenue', ['password' => 'Mot de passe incorrect'], 400);
+        }
+
+        $entityManager->remove($user);
+        $entityManager->flush();
+
+        $response = StandardJsonResponse::success('Utilisateur supprimé', null, 200);
+        $response->headers->setCookie($accessTokenCookieManager->deleteCookie());
+        $response->headers->setCookie($refreshTokenCookieManager->deleteCookie());
+
+        return $response;
     }
 }
