@@ -4,7 +4,7 @@ namespace App\Service;
 
 use Symfony\Component\HttpFoundation\Cookie;
 
-class AccessTokenCookieManager
+class AccessTokenCookieService
 {
     public function createCookie(string $token, int $ttl = 3600): Cookie
     {

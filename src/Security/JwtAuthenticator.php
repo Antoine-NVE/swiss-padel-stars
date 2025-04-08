@@ -3,7 +3,7 @@
 namespace App\Security;
 
 use App\Response\StandardJsonResponse;
-use App\Service\AccessTokenCookieManager;
+use App\Service\AccessTokenCookieService;
 use App\Service\AccessTokenJwtService;
 use Exception;
 use Firebase\JWT\JWT;
@@ -23,7 +23,7 @@ class JwtAuthenticator extends AbstractAuthenticator implements AuthenticationEn
 {
     public function __construct(
         private string $appSecret,
-        private AccessTokenCookieManager $accessTokenCookieManager
+        private AccessTokenCookieService $accessTokenCookieService
     ) {}
 
     public function supports(Request $request): ?bool
@@ -61,7 +61,7 @@ class JwtAuthenticator extends AbstractAuthenticator implements AuthenticationEn
             'line' => $exception->getLine(),
         ]);
 
-        $response->headers->setCookie($this->accessTokenCookieManager->deleteCookie());
+        $response->headers->setCookie($this->accessTokenCookieService->deleteCookie());
 
         return $response;
     }
