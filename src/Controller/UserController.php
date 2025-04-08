@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\UserAddress;
 use App\Response\StandardJsonResponse;
 use App\Service\AccessTokenCookieService;
 use App\Service\RefreshTokenCookieService;

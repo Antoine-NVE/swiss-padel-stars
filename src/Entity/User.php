@@ -79,10 +79,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $contacts;
 
     /**
-     * @var Collection<int, UserAdress>
+     * @var Collection<int, UserAddress>
      */
-    #[ORM\OneToMany(targetEntity: UserAdress::class, mappedBy: 'user', orphanRemoval: true)]
-    private Collection $userAdresses;
+    #[ORM\OneToMany(targetEntity: UserAddress::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $userAddresses;
 
     /**
      * @var Collection<int, Cart>
@@ -94,7 +94,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->refreshTokens = new ArrayCollection();
         $this->contacts = new ArrayCollection();
-        $this->userAdresses = new ArrayCollection();
+        $this->userAddresses = new ArrayCollection();
         $this->carts = new ArrayCollection();
 
         $this->createdAt = new DateTimeImmutable();
@@ -335,29 +335,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, UserAdress>
+     * @return Collection<int, UserAddress>
      */
-    public function getUserAdresses(): Collection
+    public function getUserAddresses(): Collection
     {
-        return $this->userAdresses;
+        return $this->userAddresses;
     }
 
-    public function addUserAdress(UserAdress $userAdress): static
+    public function addUserAddress(UserAddress $userAddress): static
     {
-        if (!$this->userAdresses->contains($userAdress)) {
-            $this->userAdresses->add($userAdress);
-            $userAdress->setUser($this);
+        if (!$this->userAddresses->contains($userAddress)) {
+            $this->userAddresses->add($userAddress);
+            $userAddress->setUser($this);
         }
 
         return $this;
     }
 
-    public function removeUserAdress(UserAdress $userAdress): static
+    public function removeUserAddress(UserAddress $userAddress): static
     {
-        if ($this->userAdresses->removeElement($userAdress)) {
+        if ($this->userAddresses->removeElement($userAddress)) {
             // set the owning side to null (unless already changed)
-            if ($userAdress->getUser() === $this) {
-                $userAdress->setUser(null);
+            if ($userAddress->getUser() === $this) {
+                $userAddress->setUser(null);
             }
         }
 
