@@ -157,4 +157,23 @@ class UserAddressController extends AbstractController
 
         return StandardJsonResponse::success('Adresse mise à jour', null, 200);
     }
+
+    #[Route('/delete/{id}', name: 'delete', methods: ['DELETE'])]
+    #[IsGranted('ROLE_USER')]
+    public function deleteAddress(EntityManagerInterface $entityManager, int $id): JsonResponse
+    {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
+        $address = $entityManager->getRepository(UserAddress::class)->findOneBy(['id' => $id, 'user' => $user]);
+
+        if (!$address) {
+            return StandardJsonResponse::error('Adresse non trouvée', null, 404);
+        }
+
+        $entityManager->remove($address);
+        $entityManager->flush();
+
+        return StandardJsonResponse::success('Adresse supprimée', null, 200);
+    }
 }
