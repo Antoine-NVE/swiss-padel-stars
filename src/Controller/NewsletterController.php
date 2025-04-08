@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/api/newsletter', name: 'api_newsletter_')]
@@ -92,5 +93,18 @@ class NewsletterController extends AbstractController
         $entityManager->flush();
 
         return StandardJsonResponse::success('Vous êtes maintenant désabonné de la newsletter.', [], 200);
+    }
+
+    #[Route('/subscribed-users', name: 'subscribed_users', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function getSubscribedUsers(UserRepository $userRepository): JsonResponse
+    {
+        $subscribedUsers = $userRepository->findBy(['newsletterOptin' => true]);
+
+        $userEmails = array_map(function (User $user) {
+            return $user->getEmail();
+        }, $subscribedUsers);
+
+        return StandardJsonResponse::success('Liste des utilisateurs abonnés à la newsletter.', $userEmails, 200);
     }
 }
