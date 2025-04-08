@@ -57,6 +57,30 @@ class UserController extends AbstractController
         return StandardJsonResponse::success('Adresse mise à jour', null, 200);
     }
 
+    #[Route('/get-addresses', name: 'addresses', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
+    public function getAddresses(EntityManagerInterface $entityManager): JsonResponse
+    {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
+        $addresses = $entityManager->getRepository(UserAdress::class)->findBy(['user' => $user]);
+
+        return StandardJsonResponse::success('Adresses récupérées', [
+            'addresses' => array_map(function (UserAdress $address) {
+                return [
+                    'id' => $address->getId(),
+                    'addressLine1' => $address->getAddressLine1(),
+                    'addressLine2' => $address->getAddressLine2(),
+                    'postalCode' => $address->getPostalCode(),
+                    'city' => $address->getCity(),
+                    'country' => $address->getCountry(),
+                    'phoneNumber' => $address->getPhoneNumber()
+                ];
+            }, $addresses)
+        ], 200);
+    }
+
     #[Route('/me', name: 'me', methods: ['GET'])]
     #[IsGranted('ROLE_USER')]
     public function me(): JsonResponse
