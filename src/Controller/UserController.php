@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\UserAdress;
+use App\Entity\UserAddress;
 use App\Response\StandardJsonResponse;
 use App\Service\AccessTokenCookieService;
 use App\Service\RefreshTokenCookieService;
@@ -18,92 +18,6 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 #[Route('/api/user', name: 'api_user_')]
 class UserController extends AbstractController
 {
-    #[Route('/add-address', name: 'address', methods: ['POST'])]
-    #[IsGranted('ROLE_USER')]
-    public function addAddress(Request $request, EntityManagerInterface $entityManager, ValidatorInterface $validator): JsonResponse
-    {
-        /** @var \App\Entity\User $user */
-        $user = $this->getUser();
-
-        $data = json_decode($request->getContent(), true);
-        $addressLine1 = $data['addressLine1'] ?? '';
-        $addressLine2 = $data['addressLine2'] ?? null;
-        $postalCode = $data['postalCode'] ?? '';
-        $city = $data['city'] ?? '';
-        $country = $data['country'] ?? '';
-        $phoneNumber = $data['phoneNumber'] ?? null;
-
-        $userAdress = new UserAdress();
-        $userAdress->setUser($user);
-        $userAdress->setAddressLine1($addressLine1);
-        $userAdress->setAddressLine2($addressLine2);
-        $userAdress->setPostalCode($postalCode);
-        $userAdress->setCity($city);
-        $userAdress->setCountry($country);
-        $userAdress->setPhoneNumber($phoneNumber);
-
-        $errors = $validator->validate($userAdress);
-        if (count($errors) > 0) {
-            $errorMessages = [];
-            foreach ($errors as $error) {
-                $errorMessages[$error->getPropertyPath()] = $error->getMessage();
-            }
-            return StandardJsonResponse::error('Une erreur est survenue.', $errorMessages, 400);
-        }
-
-        $entityManager->persist($userAdress);
-        $entityManager->flush();
-
-        return StandardJsonResponse::success('Adresse mise à jour', null, 200);
-    }
-
-    #[Route('/get-addresses', name: 'addresses', methods: ['GET'])]
-    #[IsGranted('ROLE_USER')]
-    public function getAddresses(EntityManagerInterface $entityManager): JsonResponse
-    {
-        /** @var \App\Entity\User $user */
-        $user = $this->getUser();
-
-        $addresses = $entityManager->getRepository(UserAdress::class)->findBy(['user' => $user]);
-
-        return StandardJsonResponse::success('Adresses récupérées', [
-            'addresses' => array_map(function (UserAdress $address) {
-                return [
-                    'id' => $address->getId(),
-                    'addressLine1' => $address->getAddressLine1(),
-                    'addressLine2' => $address->getAddressLine2(),
-                    'postalCode' => $address->getPostalCode(),
-                    'city' => $address->getCity(),
-                    'country' => $address->getCountry(),
-                    'phoneNumber' => $address->getPhoneNumber()
-                ];
-            }, $addresses)
-        ], 200);
-    }
-
-    #[Route('/get-address/{id}', name: 'address', methods: ['GET'])]
-    #[IsGranted('ROLE_USER')]
-    public function getAddress(EntityManagerInterface $entityManager, int $id): JsonResponse
-    {
-        /** @var \App\Entity\User $user */
-        $user = $this->getUser();
-
-        $address = $entityManager->getRepository(UserAdress::class)->findOneBy(['id' => $id, 'user' => $user]);
-
-        if (!$address) {
-            return StandardJsonResponse::error('Adresse non trouvée', null, 404);
-        }
-
-        return StandardJsonResponse::success('Adresse récupérée', [
-            'addressLine1' => $address->getAddressLine1(),
-            'addressLine2' => $address->getAddressLine2(),
-            'postalCode' => $address->getPostalCode(),
-            'city' => $address->getCity(),
-            'country' => $address->getCountry(),
-            'phoneNumber' => $address->getPhoneNumber()
-        ], 200);
-    }
-
     #[Route('/me', name: 'me', methods: ['GET'])]
     #[IsGranted('ROLE_USER')]
     public function me(): JsonResponse

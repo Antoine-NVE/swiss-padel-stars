@@ -2,12 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\UserAdressRepository;
+use App\Repository\UserAddressRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity(repositoryClass: UserAdressRepository::class)]
-class UserAdress
+#[ORM\Entity(repositoryClass: UserAddressRepository::class)]
+class UserAddress
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -56,7 +56,7 @@ class UserAdress
     #[ORM\Column(length: 15, nullable: true)]
     private ?string $phoneNumber = null;
 
-    #[ORM\ManyToOne(inversedBy: 'userAdresses')]
+    #[ORM\ManyToOne(inversedBy: 'userAddresses')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
