@@ -34,16 +34,9 @@ class Product
     #[ORM\OneToMany(targetEntity: ProductImage::class, mappedBy: 'product', orphanRemoval: true)]
     private Collection $productImages;
 
-    /**
-     * @var Collection<int, CartLine>
-     */
-    #[ORM\OneToMany(targetEntity: CartLine::class, mappedBy: 'product', orphanRemoval: true)]
-    private Collection $cartLines;
-
     public function __construct()
     {
         $this->productImages = new ArrayCollection();
-        $this->cartLines = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -123,36 +116,6 @@ class Product
             // set the owning side to null (unless already changed)
             if ($productImage->getProduct() === $this) {
                 $productImage->setProduct(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, CartLine>
-     */
-    public function getCartLines(): Collection
-    {
-        return $this->cartLines;
-    }
-
-    public function addCartLine(CartLine $cartLine): static
-    {
-        if (!$this->cartLines->contains($cartLine)) {
-            $this->cartLines->add($cartLine);
-            $cartLine->setProduct($this);
-        }
-
-        return $this;
-    }
-
-    public function removeCartLine(CartLine $cartLine): static
-    {
-        if ($this->cartLines->removeElement($cartLine)) {
-            // set the owning side to null (unless already changed)
-            if ($cartLine->getProduct() === $this) {
-                $cartLine->setProduct(null);
             }
         }
 
