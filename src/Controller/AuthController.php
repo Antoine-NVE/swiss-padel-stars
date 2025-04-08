@@ -7,9 +7,9 @@ use App\Entity\User;
 use App\Repository\RefreshTokenRepository;
 use App\Repository\UserRepository;
 use App\Response\StandardJsonResponse;
-use App\Service\AccessTokenCookieManager;
+use App\Service\AccessTokenCookieService;
 use App\Service\AccessTokenJwtService;
-use App\Service\RefreshTokenCookieManager;
+use App\Service\RefreshTokenCookieService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -27,8 +27,8 @@ class AuthController extends AbstractController
         EntityManagerInterface $entityManager,
         UserPasswordHasherInterface $passwordHasher,
         ValidatorInterface $validator,
-        AccessTokenCookieManager $accessTokenCookieManager,
-        RefreshTokenCookieManager $refreshTokenCookieManager,
+        AccessTokenCookieService $accessTokenCookieService,
+        RefreshTokenCookieService $refreshTokenCookieService,
         UserRepository $userRepository,
     ): JsonResponse {
         $data = json_decode($request->getContent(), true);
@@ -91,8 +91,8 @@ class AuthController extends AbstractController
         $entityManager->flush();
 
         $response = StandardJsonResponse::success('Inscription réussie !', null, 201);
-        $response->headers->setCookie($accessTokenCookieManager->createCookie($accessToken));
-        $response->headers->setCookie($refreshTokenCookieManager->createCookie($refreshToken->getToken()));
+        $response->headers->setCookie($accessTokenCookieService->createCookie($accessToken));
+        $response->headers->setCookie($refreshTokenCookieService->createCookie($refreshToken->getToken()));
 
         return $response;
     }
@@ -103,8 +103,8 @@ class AuthController extends AbstractController
         UserPasswordHasherInterface $passwordHasher,
         UserRepository $userRepository,
         EntityManagerInterface $entityManager,
-        AccessTokenCookieManager $accessTokenCookieManager,
-        RefreshTokenCookieManager $refreshTokenCookieManager,
+        AccessTokenCookieService $accessTokenCookieService,
+        RefreshTokenCookieService $refreshTokenCookieService,
     ): JsonResponse {
         $data = json_decode($request->getContent(), true);
 
@@ -142,16 +142,16 @@ class AuthController extends AbstractController
         $entityManager->flush();
 
         $response = StandardJsonResponse::success('Connexion réussie');
-        $response->headers->setCookie($accessTokenCookieManager->createCookie($accessToken));
-        $response->headers->setCookie($refreshTokenCookieManager->createCookie($refreshToken->getToken()));
+        $response->headers->setCookie($accessTokenCookieService->createCookie($accessToken));
+        $response->headers->setCookie($refreshTokenCookieService->createCookie($refreshToken->getToken()));
 
         return $response;
     }
 
     #[Route('/refresh', name: 'refresh', methods: ['POST'])]
     public function refresh(
-        AccessTokenCookieManager $accessTokenCookieManager,
-        RefreshTokenCookieManager $refreshTokenCookieManager,
+        AccessTokenCookieService $accessTokenCookieService,
+        RefreshTokenCookieService $refreshTokenCookieService,
         RefreshTokenRepository $refreshTokenRepository,
         EntityManagerInterface $entityManager,
         Request $request
@@ -171,7 +171,7 @@ class AuthController extends AbstractController
             $response = StandardJsonResponse::error('Token invalide', null, 401, [
                 'message' => 'Token de refresh non trouvé en BDD ou expiré'
             ]);
-            $response->headers->setCookie($refreshTokenCookieManager->deleteCookie());
+            $response->headers->setCookie($refreshTokenCookieService->deleteCookie());
 
             return $response;
         }
@@ -183,16 +183,16 @@ class AuthController extends AbstractController
         $entityManager->flush();
 
         $response = StandardJsonResponse::success('Token rafraîchi');
-        $response->headers->setCookie($accessTokenCookieManager->createCookie($accessToken));
-        $response->headers->setCookie($refreshTokenCookieManager->createCookie($refreshToken->getToken()));
+        $response->headers->setCookie($accessTokenCookieService->createCookie($accessToken));
+        $response->headers->setCookie($refreshTokenCookieService->createCookie($refreshToken->getToken()));
 
         return $response;
     }
 
     #[Route('/logout', name: 'logout', methods: ['POST'])]
     public function logout(
-        AccessTokenCookieManager $accessTokenCookieManager,
-        RefreshTokenCookieManager $refreshTokenCookieManager,
+        AccessTokenCookieService $accessTokenCookieService,
+        RefreshTokenCookieService $refreshTokenCookieService,
         Request $request,
         EntityManagerInterface $entityManager,
         RefreshTokenRepository $refreshTokenRepository
@@ -204,8 +204,8 @@ class AuthController extends AbstractController
 
         // Supprimer le cookie contenant le token
         $response = StandardJsonResponse::success('Déconnexion réussie', null, 200);
-        $response->headers->setCookie($accessTokenCookieManager->deleteCookie());
-        $response->headers->setCookie($refreshTokenCookieManager->deleteCookie());
+        $response->headers->setCookie($accessTokenCookieService->deleteCookie());
+        $response->headers->setCookie($refreshTokenCookieService->deleteCookie());
 
         return $response;
     }

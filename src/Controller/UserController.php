@@ -3,8 +3,8 @@
 namespace App\Controller;
 
 use App\Response\StandardJsonResponse;
-use App\Service\AccessTokenCookieManager;
-use App\Service\RefreshTokenCookieManager;
+use App\Service\AccessTokenCookieService;
+use App\Service\RefreshTokenCookieService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -38,7 +38,7 @@ class UserController extends AbstractController
         ], 200);
     }
 
-    #[Route('/update', name: 'update', methods: ['PATCH'])]
+    #[Route('/update', name: 'update', methods: ['PUT'])]
     #[IsGranted('ROLE_USER')]
     public function update(Request $request, EntityManagerInterface $entityManager, ValidatorInterface $validator): JsonResponse
     {
@@ -93,7 +93,7 @@ class UserController extends AbstractController
         ], 200);
     }
 
-    #[Route('/update-password', name: 'update_password', methods: ['POST'])]
+    #[Route('/update-password', name: 'update_password', methods: ['PUT'])]
     #[IsGranted('ROLE_USER')]
     public function updatePassword(
         Request $request,
@@ -135,8 +135,8 @@ class UserController extends AbstractController
         EntityManagerInterface $entityManager,
         UserPasswordHasherInterface $passwordHasher,
         Request $request,
-        AccessTokenCookieManager $accessTokenCookieManager,
-        RefreshTokenCookieManager $refreshTokenCookieManager,
+        AccessTokenCookieService $accessTokenCookieService,
+        RefreshTokenCookieService $refreshTokenCookieService,
     ): JsonResponse {
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
@@ -150,8 +150,8 @@ class UserController extends AbstractController
         $entityManager->flush();
 
         $response = StandardJsonResponse::success('Utilisateur supprimé', null, 200);
-        $response->headers->setCookie($accessTokenCookieManager->deleteCookie());
-        $response->headers->setCookie($refreshTokenCookieManager->deleteCookie());
+        $response->headers->setCookie($accessTokenCookieService->deleteCookie());
+        $response->headers->setCookie($refreshTokenCookieService->deleteCookie());
 
         return $response;
     }
