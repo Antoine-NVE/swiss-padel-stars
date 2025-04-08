@@ -81,6 +81,29 @@ class UserController extends AbstractController
         ], 200);
     }
 
+    #[Route('/get-address/{id}', name: 'address', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
+    public function getAddress(EntityManagerInterface $entityManager, int $id): JsonResponse
+    {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
+        $address = $entityManager->getRepository(UserAdress::class)->findOneBy(['id' => $id, 'user' => $user]);
+
+        if (!$address) {
+            return StandardJsonResponse::error('Adresse non trouvée', null, 404);
+        }
+
+        return StandardJsonResponse::success('Adresse récupérée', [
+            'addressLine1' => $address->getAddressLine1(),
+            'addressLine2' => $address->getAddressLine2(),
+            'postalCode' => $address->getPostalCode(),
+            'city' => $address->getCity(),
+            'country' => $address->getCountry(),
+            'phoneNumber' => $address->getPhoneNumber()
+        ], 200);
+    }
+
     #[Route('/me', name: 'me', methods: ['GET'])]
     #[IsGranted('ROLE_USER')]
     public function me(): JsonResponse
