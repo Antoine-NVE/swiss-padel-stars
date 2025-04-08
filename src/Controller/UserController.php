@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\UserAdress;
 use App\Response\StandardJsonResponse;
 use App\Service\AccessTokenCookieService;
 use App\Service\RefreshTokenCookieService;
@@ -17,6 +18,45 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 #[Route('/api/user', name: 'api_user_')]
 class UserController extends AbstractController
 {
+    #[Route('/add-address', name: 'address', methods: ['POST'])]
+    #[IsGranted('ROLE_USER')]
+    public function addAddress(Request $request, EntityManagerInterface $entityManager, ValidatorInterface $validator): JsonResponse
+    {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
+        $data = json_decode($request->getContent(), true);
+        $addressLine1 = $data['addressLine1'] ?? '';
+        $addressLine2 = $data['addressLine2'] ?? null;
+        $postalCode = $data['postalCode'] ?? '';
+        $city = $data['city'] ?? '';
+        $country = $data['country'] ?? '';
+        $phoneNumber = $data['phoneNumber'] ?? null;
+
+        $userAdress = new UserAdress();
+        $userAdress->setUser($user);
+        $userAdress->setAddressLine1($addressLine1);
+        $userAdress->setAddressLine2($addressLine2);
+        $userAdress->setPostalCode($postalCode);
+        $userAdress->setCity($city);
+        $userAdress->setCountry($country);
+        $userAdress->setPhoneNumber($phoneNumber);
+
+        $errors = $validator->validate($userAdress);
+        if (count($errors) > 0) {
+            $errorMessages = [];
+            foreach ($errors as $error) {
+                $errorMessages[$error->getPropertyPath()] = $error->getMessage();
+            }
+            return StandardJsonResponse::error('Une erreur est survenue.', $errorMessages, 400);
+        }
+
+        $entityManager->persist($userAdress);
+        $entityManager->flush();
+
+        return StandardJsonResponse::success('Adresse mise à jour', null, 200);
+    }
+
     #[Route('/me', name: 'me', methods: ['GET'])]
     #[IsGranted('ROLE_USER')]
     public function me(): JsonResponse

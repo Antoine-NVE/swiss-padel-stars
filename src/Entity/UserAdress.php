@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\UserAdressRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserAdressRepository::class)]
 class UserAdress
@@ -14,18 +15,42 @@ class UserAdress
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 5, max: 255)]
+    #[Assert\Regex(
+        pattern: '/^[a-zA-Z0-9\s]+$/',
+        message: 'L\'adresse ne doit contenir que des lettres, des chiffres et des espaces.'
+    )]
     private ?string $addressLine1 = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $addressLine2 = null;
 
     #[ORM\Column(length: 5)]
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 5, max: 5)]
+    #[Assert\Regex(
+        pattern: '/^\d{5}$/',
+        message: 'Le code postal doit contenir 5 chiffres.'
+    )]
     private ?string $postalCode = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 2, max: 255)]
+    #[Assert\Regex(
+        pattern: '/^[a-zA-Z\s]+$/',
+        message: 'La ville ne doit contenir que des lettres et des espaces.'
+    )]
     private ?string $city = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 2, max: 255)]
+    #[Assert\Regex(
+        pattern: '/^[a-zA-Z\s]+$/',
+        message: 'Le pays ne doit contenir que des lettres et des espaces.'
+    )]
     private ?string $country = null;
 
     #[ORM\Column(length: 15, nullable: true)]
