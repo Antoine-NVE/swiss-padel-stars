@@ -101,4 +101,60 @@ class UserAddressController extends AbstractController
             'phoneNumber' => $address->getPhoneNumber()
         ], 200);
     }
+
+    #[Route('/update/{id}', name: 'update', methods: ['PUT'])]
+    #[IsGranted('ROLE_USER')]
+    public function updateAddress(Request $request, EntityManagerInterface $entityManager, ValidatorInterface $validator, int $id): JsonResponse
+    {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+
+        $address = $entityManager->getRepository(UserAddress::class)->findOneBy(['id' => $id, 'user' => $user]);
+
+        if (!$address) {
+            return StandardJsonResponse::error('Adresse non trouvée', null, 404);
+        }
+
+        $data = json_decode($request->getContent(), true);
+        $addressLine1 = $data['addressLine1'] ?? '';
+        $addressLine2 = $data['addressLine2'] ?? null;
+        $postalCode = $data['postalCode'] ?? '';
+        $city = $data['city'] ?? '';
+        $country = $data['country'] ?? '';
+        $phoneNumber = $data['phoneNumber'] ?? null;
+
+        if ($addressLine1) {
+            $address->setAddressLine1($addressLine1);
+        }
+        if ($addressLine2) {
+            $address->setAddressLine2($addressLine2);
+        }
+        if ($postalCode) {
+            $address->setPostalCode($postalCode);
+        }
+        if ($city) {
+            $address->setCity($city);
+        }
+        if ($country) {
+            $address->setCountry($country);
+        }
+        if ($phoneNumber) {
+            $address->setPhoneNumber($phoneNumber);
+        }
+
+        // Validate the updated address
+        $errors = $validator->validate($address);
+        if (count($errors) > 0) {
+            $errorMessages = [];
+            foreach ($errors as $error) {
+                $errorMessages[$error->getPropertyPath()] = $error->getMessage();
+            }
+            return StandardJsonResponse::error('Une erreur est survenue.', $errorMessages, 400);
+        }
+
+        // Persist the changes
+        $entityManager->flush();
+
+        return StandardJsonResponse::success('Adresse mise à jour', null, 200);
+    }
 }
