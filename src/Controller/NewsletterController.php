@@ -27,7 +27,7 @@ class NewsletterController extends AbstractController
         if ($user) {
             $user->setNewsletterOptin(true);
             $entityManager->flush();
-            return new JsonResponse(['message' => 'Vous êtes maintenant abonné à la newsletter.'], 200);
+            return StandardJsonResponse::success('Vous êtes maintenant abonné à la newsletter.', [], 200);
         }
 
         $data = json_decode($request->getContent(), true);
@@ -59,6 +59,38 @@ class NewsletterController extends AbstractController
         }
         $entityManager->flush();
 
-        return new JsonResponse(['message' => 'Vous êtes maintenant abonné à la newsletter.'], 200);
+        return StandardJsonResponse::success('Vous êtes maintenant abonné à la newsletter.', [], 200);
+    }
+
+    #[Route('/unsubscribe', name: 'unsubscribe', methods: ['POST'])]
+    public function unsubscribe(
+        EntityManagerInterface $entityManager,
+        Request $request,
+        UserRepository $userRepository
+    ): JsonResponse {
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+        if ($user) {
+            $user->setNewsletterOptin(false);
+            $entityManager->flush();
+            return StandardJsonResponse::success('Vous êtes maintenant désabonné de la newsletter.', [], 200);
+        }
+
+        $data = json_decode($request->getContent(), true);
+        $email = $data['email'] ?? '';
+        /** @var \App\Entity\User $user */
+        $user = $userRepository->findOneBy(['email' => $email]);
+        if (!$user) {
+            return StandardJsonResponse::error('Aucun utilisateur trouvé avec cet email.', [], 400);
+        }
+
+        if (!$user->isAnonymous()) {
+            return StandardJsonResponse::error('Veuillez vous connecter pour vous désabonner de la newsletter.', [], 400);
+        }
+
+        $user->setNewsletterOptin(false);
+        $entityManager->flush();
+
+        return StandardJsonResponse::success('Vous êtes maintenant désabonné de la newsletter.', [], 200);
     }
 }
