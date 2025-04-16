@@ -22,3 +22,5 @@ yarn-error.log
 # mac useless files
 .DS_Store
 todo.*
+
+/public/uploads
