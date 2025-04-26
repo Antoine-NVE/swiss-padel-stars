@@ -60,8 +60,6 @@ export default function Page() {
                 setSuccessMessage(json.message || "Votre message a été envoyé !");
                 setFormData((prev) => ({ ...prev, message: "", contactType: "" }));
             } else {
-                console.log(json);
-
                 setErrors(json.errors || {});
             }
         } catch (error) {
