@@ -55,7 +55,9 @@ class NewsletterController extends AbstractController
             if ($user->isAnonymous()) {
                 $user->setNewsletterOptin(true);
             } else {
-                return StandardJsonResponse::error('Veuillez vous connecter pour vous abonner à la newsletter.', [], 400);
+                return StandardJsonResponse::error('Une erreur est survenue', [
+                    'email' => 'Vous devez vous connecter pour vous abonner à la newsletter.',
+                ], 400);
             }
         }
         $entityManager->flush();

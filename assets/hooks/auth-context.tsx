@@ -7,6 +7,7 @@ interface AuthContextType {
     user: APIResponse["USER_PROFILE"] | null;
     login: (email: string, password: string) => Promise<AuthResponse>;
     register: (form: RegisterForm) => Promise<AuthResponse>;
+    updateUser: (updatedFields: Partial<APIResponse["USER_PROFILE"]>) => void;
     logout: () => Promise<void>;
 }
 
@@ -88,12 +89,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
+    const updateUser = (updatedFields: Partial<APIResponse["USER_PROFILE"]>) => {
+        setUser((prevUser) => (prevUser ? { ...prevUser, ...updatedFields } : prevUser));
+    };
+
     const logout = async () => {
         await fetch("/api/auth/logout", { method: "POST" });
         setUser(null);
     };
 
-    return <AuthContext.Provider value={{ user, login, register, logout }}>{children}</AuthContext.Provider>;
+    return (
+        <AuthContext.Provider value={{ user, login, register, logout, updateUser }}>{children}</AuthContext.Provider>
+    );
 };
 
 export const useAuth = () => {

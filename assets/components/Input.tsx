@@ -13,6 +13,7 @@ export const Input = ({
     iconSize,
     value,
     onChange,
+    disabled,
 }: {
     name: string;
     htmlFor: string;
@@ -23,6 +24,7 @@ export const Input = ({
     iconSize?: number;
     value?: string;
     onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    disabled?: boolean;
 }) => {
     const xcolor = color === "black" ? "text-black" : "text-white";
     const xbg = bg === "white" ? "bg-white" : "bg-grey";
@@ -38,6 +40,7 @@ export const Input = ({
                 value={value}
                 onChange={onChange}
                 className={cn("rounded-full h-10 w-full", xplaceholder, xbg)}
+                disabled={disabled}
             />
             <PlusIcon size={iconSize || 18} className="rotate-45 absolute top-1/2 right-2 transform -translate-y-1/2" />
         </label>
