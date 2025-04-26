@@ -65,71 +65,41 @@ const Nav = ({ links }: { links: NavLinkType[] }) => {
  * Auth forms
  */
 const AuthSection = ({ Icon }: { Icon: React.ReactNode }) => {
-    const { login, user, logout } = useAuth();
-
+    const { user, login, register, logout } = useAuth();
     const navigate = useNavigate();
 
-    const handleProfileData = async () => {
-        const response = await fetch(endpoints.profile);
+    const [loginData, setLoginData] = useState({ email: "", password: "" });
+    const [registerData, setRegisterData] = useState({
+        company: "",
+        lastName: "",
+        firstName: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+    });
 
-        if (response.ok) {
-            login(await response.json());
-            return;
-        }
-    };
-
-    useEffect(() => {
-        handleProfileData();
-    }, []);
-
-    const handleRegisterSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
-
-        const formData = new FormData(e.currentTarget);
-        const data = Object.fromEntries(formData.entries());
-
-        const response = await fetch(endpoints.register, {
-            method: "POST",
-            body: JSON.stringify(data),
-        });
-
-        console.log(response);
-        console.log(await response.json());
-
-        if (response.status === 201) {
-            handleProfileData();
-            prompt("Vous êtes inscrit !");
-            return;
-        }
-
-        prompt("L'inscription n'a pas réussi");
+        const result = await login(loginData.email, loginData.password);
+        alert(result.message);
     };
 
-    const handleLoginSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const [registerErrors, setRegisterErrors] = useState<{ [key: string]: string }>({});
+
+    const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
+        const result = await register(registerData);
 
-        const formData = new FormData(e.currentTarget);
-        const data = Object.fromEntries(formData.entries());
-
-        const response = await fetch(endpoints.login, {
-            method: "POST",
-            body: JSON.stringify(data),
-        });
-
-        const json = await response.json();
-        console.log(response);
-        console.log(json);
-
-        if (response.status === 200) {
-            handleProfileData();
-            prompt("Vous êtes connecté !");
+        if (result.success) {
+            alert(result.message);
+            setRegisterErrors({});
+        } else {
+            setRegisterErrors(result.errors || {});
         }
-
-        prompt("La connexion n'a pas réussi");
     };
 
-    const handleLogout = () => {
-        logout();
+    const handleLogout = async () => {
+        await logout();
         navigate("/");
     };
 
@@ -138,72 +108,140 @@ const AuthSection = ({ Icon }: { Icon: React.ReactNode }) => {
             <DropdownMenuTrigger className="text-secondary">
                 <div className="relative">
                     {Icon}
-                    <svg
-                        width="25"
-                        height="25"
-                        viewBox="0 0 20 20"
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="absolute bottom-0 right-0 opacity-90">
+                    <svg width="25" height="25" viewBox="0 0 20 20" className="absolute bottom-0 right-0 opacity-90">
                         <circle cx="15" cy="15" r="5" fill={user ? "green" : "red"} />
                     </svg>
                 </div>
             </DropdownMenuTrigger>
-            <Content>
+            <Content
+                className={`${
+                    user ? "min-w-[12rem] max-w-[16rem] items-center" : "min-w-[20rem] max-w-[24rem] items-stretch"
+                } p-4 flex flex-col gap-3`}>
                 {!user ? (
                     <>
                         <SubTitle>
                             <h3>Connexion</h3>
                         </SubTitle>
-
-                        <Box as="form" onSubmit={handleLoginSubmit}>
-                            <Input name="email" htmlFor="login-email" placeholder="Adresse email.." type="email" />
+                        <form onSubmit={handleLogin} className="flex flex-col gap-5">
                             <Input
-                                name="password"
-                                htmlFor="login-password"
-                                placeholder="Mot de passe.."
-                                type="password"
+                                type="email"
+                                placeholder="Email"
+                                name="email"
+                                htmlFor="email"
+                                value={loginData.email}
+                                onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
                             />
-                            <Button>Valider</Button>
-                        </Box>
-                    </>
-                ) : (
-                    <Button onClick={handleLogout}>Se déconnecter</Button>
-                )}
-                <DropdownMenuSeparator />
-                {!user ? (
-                    <>
+                            <Input
+                                type="password"
+                                placeholder="Mot de passe"
+                                name="password"
+                                htmlFor="password"
+                                value={loginData.password}
+                                onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
+                            />
+                            <Button type="submit">Se connecter</Button>
+                        </form>
+                        <DropdownMenuSeparator />
                         <SubTitle>
                             <h3>Inscription</h3>
                         </SubTitle>
-                        <Box as="form" onSubmit={handleRegisterSubmit}>
-                            <Input
-                                name="company"
-                                htmlFor="register-company"
-                                placeholder="Nom de l'entreprise.."
-                                type="text"
-                            />
-                            <Input name="lastName" htmlFor="register-lastname" placeholder="Nom" type="text" />
-                            <Input name="firstName" htmlFor="register-firstname" placeholder="Prenom" type="text" />
-                            <Input name="email" htmlFor="register-email" placeholder="Adresse email.." type="email" />
-                            <Input
-                                name="password"
-                                htmlFor="register-password"
-                                placeholder="Mot de passe.."
-                                type="password"
-                            />
-                            <Input
-                                name="confirm-password"
-                                htmlFor="register-confirm-password"
-                                placeholder="Confirmer mot de passe.."
-                                type="password"
-                            />
-                            <Button>Valider</Button>
-                        </Box>
+                        <form onSubmit={handleRegister} className="flex flex-col gap-4">
+                            <div className="flex flex-col">
+                                <Input
+                                    placeholder="Nom *"
+                                    name="lastName"
+                                    htmlFor="lastName"
+                                    type="text"
+                                    value={registerData.lastName}
+                                    onChange={(e) => setRegisterData({ ...registerData, lastName: e.target.value })}
+                                />
+                                {registerErrors.lastName && (
+                                    <p className="text-red-500 text-sm mt-1">{registerErrors.lastName}</p>
+                                )}
+                            </div>
+
+                            <div className="flex flex-col">
+                                <Input
+                                    placeholder="Prénom *"
+                                    name="firstName"
+                                    htmlFor="firstName"
+                                    type="text"
+                                    value={registerData.firstName}
+                                    onChange={(e) => setRegisterData({ ...registerData, firstName: e.target.value })}
+                                />
+                                {registerErrors.firstName && (
+                                    <p className="text-red-500 text-sm mt-1">{registerErrors.firstName}</p>
+                                )}
+                            </div>
+
+                            <div className="flex flex-col">
+                                <Input
+                                    placeholder="Entreprise"
+                                    name="company"
+                                    htmlFor="company"
+                                    type="text"
+                                    value={registerData.company}
+                                    onChange={(e) => setRegisterData({ ...registerData, company: e.target.value })}
+                                />
+                                {registerErrors.company && (
+                                    <p className="text-red-500 text-sm mt-1">{registerErrors.company}</p>
+                                )}
+                            </div>
+
+                            <div className="flex flex-col">
+                                <Input
+                                    placeholder="Adresse email *"
+                                    name="email"
+                                    htmlFor="email"
+                                    type="email"
+                                    value={registerData.email}
+                                    onChange={(e) => setRegisterData({ ...registerData, email: e.target.value })}
+                                />
+                                {registerErrors.email && (
+                                    <p className="text-red-500 text-sm mt-1">{registerErrors.email}</p>
+                                )}
+                            </div>
+
+                            <div className="flex flex-col">
+                                <Input
+                                    placeholder="Mot de passe *"
+                                    name="password"
+                                    htmlFor="password"
+                                    type="password"
+                                    value={registerData.password}
+                                    onChange={(e) => setRegisterData({ ...registerData, password: e.target.value })}
+                                />
+                                {registerErrors.password && (
+                                    <p className="text-red-500 text-sm mt-1">{registerErrors.password}</p>
+                                )}
+                            </div>
+
+                            {/* Pas la force de traiter ça */}
+                            {/* <div className="flex flex-col">
+                                <Input
+                                    placeholder="Confirmer mot de passe *"
+                                    name="confirmPassword"
+                                    htmlFor="confirmPassword"
+                                    type="password"
+                                    value={registerData.confirmPassword}
+                                    onChange={(e) =>
+                                        setRegisterData({ ...registerData, confirmPassword: e.target.value })
+                                    }
+                                />
+                                {registerErrors.confirmPassword && (
+                                    <p className="text-red-500 text-sm mt-1">{registerErrors.confirmPassword}</p>
+                                )}
+                            </div> */}
+                            <Button type="submit">S'inscrire</Button>
+                        </form>
                     </>
                 ) : (
-                    <Button>
-                        <NavLink to={"/profil"}>Voir mon profil</NavLink>
-                    </Button>
+                    <>
+                        <div className="flex flex-col gap-3 mt-2">
+                            <Button onClick={() => navigate("/profil")}>Voir mon profil</Button>
+                            <Button onClick={handleLogout}>Se déconnecter</Button>
+                        </div>
+                    </>
                 )}
             </Content>
         </DropdownMenu>

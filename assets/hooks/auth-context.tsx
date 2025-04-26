@@ -1,38 +1,101 @@
-import React, { createContext, ReactNode, useContext, useState } from "react";
+import React, { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import type { APIResponse } from "../types";
-
-const logoutEndpoint = "/api/auth/logout";
-
-interface AuthContextType {
-    user: APIResponse["USER_PROFILE"] | null;
-    login: (userData: APIResponse["USER_PROFILE"] | null) => void;
-    logout: () => void;
-}
-
-// Create Auth Context
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-// Auth Provider Component
+interface AuthContextType {
+    user: APIResponse["USER_PROFILE"] | null;
+    login: (email: string, password: string) => Promise<AuthResponse>;
+    register: (form: RegisterForm) => Promise<AuthResponse>;
+    logout: () => Promise<void>;
+}
+
+interface RegisterForm {
+    company: string;
+    lastName: string;
+    firstName: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+}
+
+type AuthResponse = {
+    success: boolean;
+    message: string;
+    errors?: { [key: string]: string };
+};
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<APIResponse["USER_PROFILE"] | null>(null);
 
-    const login = (userData: APIResponse["USER_PROFILE"] | null) => {
-        if (!userData) return;
-        setUser(userData);
+    const fetchProfile = async () => {
+        const res = await fetch("/api/user/me");
+        if (res.ok) {
+            const json = await res.json();
+            setUser(json.data); // Utiliser "data", pas tout le json
+        } else {
+            setUser(null); // Si erreur, on reset l'utilisateur
+        }
+    };
+
+    useEffect(() => {
+        fetchProfile();
+    }, []);
+
+    const login = async (email: string, password: string): Promise<AuthResponse> => {
+        const res = await fetch("/api/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password }),
+        });
+
+        try {
+            const json = await res.json();
+
+            if (res.ok) {
+                await fetchProfile();
+                return { success: true, message: json.message || "Connexion réussie" };
+            } else {
+                return { success: false, message: json.message || "Erreur lors de la connexion" };
+            }
+        } catch (error) {
+            return { success: false, message: "Erreur de communication avec le serveur" };
+        }
+    };
+
+    const register = async (form: RegisterForm): Promise<AuthResponse> => {
+        const res = await fetch("/api/auth/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(form),
+        });
+
+        try {
+            const json = await res.json();
+
+            if (res.status === 201) {
+                await fetchProfile();
+                return { success: true, message: json.message || "Inscription réussie" };
+            } else {
+                return {
+                    success: false,
+                    message: json.message || "Erreur lors de l'inscription",
+                    errors: json.errors || {},
+                };
+            }
+        } catch (error) {
+            return { success: false, message: "Erreur de communication avec le serveur" };
+        }
     };
 
     const logout = async () => {
+        await fetch("/api/auth/logout", { method: "POST" });
         setUser(null);
-        const response = await fetch(logoutEndpoint, { method: "POST" });
-
-        return response.ok ? true : false;
     };
 
-    return <AuthContext.Provider value={{ user, login, logout }}>{children}</AuthContext.Provider>;
+    return <AuthContext.Provider value={{ user, login, register, logout }}>{children}</AuthContext.Provider>;
 };
 
-// Custom hook to use AuthContext
 export const useAuth = () => {
     const context = useContext(AuthContext);
     if (!context) {

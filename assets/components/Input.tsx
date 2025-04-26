@@ -11,6 +11,8 @@ export const Input = ({
     color,
     bg,
     iconSize,
+    value,
+    onChange,
 }: {
     name: string;
     htmlFor: string;
@@ -19,6 +21,8 @@ export const Input = ({
     color?: "white" | "black";
     bg?: "white" | "grey";
     iconSize?: number;
+    value?: string;
+    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) => {
     const xcolor = color === "black" ? "text-black" : "text-white";
     const xbg = bg === "white" ? "bg-white" : "bg-grey";
@@ -31,7 +35,9 @@ export const Input = ({
                 name={name}
                 id={htmlFor}
                 placeholder={placeholder}
-                className={cn("rounded-full h-10", xplaceholder, xbg)}
+                value={value}
+                onChange={onChange}
+                className={cn("rounded-full h-10 w-full", xplaceholder, xbg)}
             />
             <PlusIcon size={iconSize || 18} className="rotate-45 absolute top-1/2 right-2 transform -translate-y-1/2" />
         </label>
