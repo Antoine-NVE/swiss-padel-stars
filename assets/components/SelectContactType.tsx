@@ -1,5 +1,4 @@
-import React from "react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Select as RadixSelect, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 
 type ContactType = {
@@ -7,7 +6,13 @@ type ContactType = {
     type: string;
 };
 
-export default function SelectContactType() {
+// On ajoute value et onChange en props
+interface SelectContactTypeProps {
+    value: string;
+    onChange: (value: string) => void;
+}
+
+export default function SelectContactType({ value, onChange }: SelectContactTypeProps) {
     const [contactTypes, setContactTypes] = useState<ContactType[]>([]);
 
     useEffect(() => {
@@ -30,7 +35,7 @@ export default function SelectContactType() {
     }, []);
 
     return (
-        <RadixSelect name="contactType">
+        <RadixSelect value={value} onValueChange={onChange}>
             <SelectTrigger className="w-[225px] rounded-full bg-grey text-white border-none">
                 <SelectValue placeholder="Veuillez sélectionner" />
             </SelectTrigger>
