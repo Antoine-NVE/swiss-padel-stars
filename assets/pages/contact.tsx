@@ -78,16 +78,18 @@ export default function Page() {
             <section className="space-y-10 w-full px-20">
                 <h3 className="text-secondary text-3xl font-semibold">Nous contacter</h3>
 
-                <form onSubmit={handleSubmit} className="flex flex-col justify-between gap-10 [&_label]:max-w-none">
+                <form onSubmit={handleSubmit} className="flex flex-col justify-between gap-5 [&_label]:max-w-none">
                     {/* Sélection du type de contact */}
-                    <SelectContactType
-                        value={formData.contactType}
-                        onChange={(value) => setFormData((prev) => ({ ...prev, contactType: value }))}
-                    />
-                    {errors.contactType && <p className="text-red-500 text-sm">{errors.contactType}</p>}
+                    <div className="flex flex-col gap-2">
+                        <SelectContactType
+                            value={formData.contactType}
+                            onChange={(value) => setFormData((prev) => ({ ...prev, contactType: value }))}
+                        />
+                        {errors.contactType && <p className="text-red-500 text-sm">{errors.contactType}</p>}
+                    </div>
 
                     <div className="w-full grid grid-cols-2 justify-items-center gap-10">
-                        <div className="flex flex-col w-full">
+                        <div className="flex flex-col gap-2 w-full">
                             <Input
                                 placeholder="Votre nom.."
                                 name="name"
@@ -100,7 +102,7 @@ export default function Page() {
                             {errors.lastName && <p className="text-red-500 text-sm">{errors.lastName}</p>}
                         </div>
 
-                        <div className="flex flex-col w-full">
+                        <div className="flex flex-col gap-2 w-full">
                             <Input
                                 placeholder="Votre prénom.."
                                 name="firstname"
@@ -115,7 +117,7 @@ export default function Page() {
                     </div>
 
                     <div className="flex flex-col gap-10">
-                        <div className="flex flex-col w-full">
+                        <div className="flex flex-col gap-2 w-full">
                             <Input
                                 placeholder="Votre entreprise.."
                                 name="company"
@@ -128,7 +130,7 @@ export default function Page() {
                             {errors.company && <p className="text-red-500 text-sm">{errors.company}</p>}
                         </div>
 
-                        <div className="flex flex-col w-full">
+                        <div className="flex flex-col gap-2 w-full">
                             <Input
                                 placeholder="Votre email.."
                                 name="email"
@@ -142,7 +144,7 @@ export default function Page() {
                         </div>
                     </div>
 
-                    <div className="flex flex-col w-full">
+                    <div className="flex flex-col gap-2 w-full">
                         <Textarea
                             name="message"
                             id="message"
@@ -167,7 +169,7 @@ export default function Page() {
             </section>
 
             {/* Coordonnées et Google Maps */}
-            <article className={"flex center justify-around [&_.wrapper]:w-[500px]"}>
+            <article className="flex center justify-around [&_.wrapper]:w-[500px]">
                 <div className="wrapper flex flex-col items-start justify-around">
                     <h3 className="text-secondary text-3xl font-semibold mb-3">Siège social</h3>
                     <p className="text-white text-xl text-balance text-justify">Rue de Neuchâtel 8, 1201 Genève</p>
@@ -182,7 +184,8 @@ export default function Page() {
                         height="325"
                         loading="lazy"
                         referrerPolicy="no-referrer-when-downgrade"
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2760.8816768770323!2d6.141157315602687!3d46.2072439791161!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x478c64ff8f7584d9%3A0xe39bffddc1913fc!2sRue%20de%20Neuchâtel%208%2C%201201%20Genève%2C%20Suisse!5e0!3m2!1sen!2sfr!4v1707324581000"></iframe>
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2760.8816768770323!2d6.141157315602687!3d46.2072439791161!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x478c64ff8f7584d9%3A0xe39bffddc1913fc!2sRue%20de%20Neuchâtel%208%2C%201201%20Genève%2C%20Suisse!5e0!3m2!1sen!2sfr!4v1707324581000"
+                    />
                 </div>
             </article>
 
