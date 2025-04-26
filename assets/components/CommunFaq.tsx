@@ -2,6 +2,7 @@ import React from "react";
 import { Button } from "../components/ui/button";
 import { FaqType } from "../types";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./ui/accordion";
+import { NavLink } from "react-router-dom";
 
 const defaultFaq: FaqType[] = [
     {
@@ -47,9 +48,9 @@ export default function CommunFaq({ faq = defaultFaq }: { faq?: FaqType[] }) {
             </Accordion>
             <div className="flex justify-center items-center gap-5 w-full">
                 <p>Vous avez une autre question ? </p>
-                <a href="/contact">
+                <NavLink to="/contact">
                     <Button className="rounded-md">Contactez-nous</Button>
-                </a>
+                </NavLink>
             </div>
         </section>
     );

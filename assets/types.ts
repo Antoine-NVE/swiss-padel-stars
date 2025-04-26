@@ -53,6 +53,8 @@ export type APIResponseType<T> = {
 export type NavLink = {
     label: string;
     href: string;
+    navbar: boolean;
+    available: boolean;
 };
 
 export type ImgProps = { src: `build/images/${string}` | string; alt: string; width: number; height: number };

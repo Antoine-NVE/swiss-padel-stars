@@ -33,20 +33,26 @@ const endpoints = {
  * Navigation
  */
 const Nav = ({ links }: { links: NavLinkType[] }) => {
+    const [open, setOpen] = useState(false);
+
     return (
         <nav className="flex center w-1/2">
-            <DropdownMenu>
+            <DropdownMenu open={open} onOpenChange={setOpen}>
                 <DropdownMenuTrigger>
                     <MenuIcon className="text-secondary" size={ICON_SIZE} />
                 </DropdownMenuTrigger>
-                <Content className="min-h-[500px]">
-                    {links.map((link) => (
-                        <div
-                            key={link.label}
-                            className="grow text-secondary font-medium text-xl hover:bg-primary/90 hover:[&_a]:underline p-2">
-                            <NavLink to={link.href}>{link.label}</NavLink>
-                        </div>
-                    ))}
+                <Content className="min-h-[250px]">
+                    {links
+                        .filter((link) => link.navbar !== false && link.available !== false)
+                        .map((link) => (
+                            <div
+                                key={link.label}
+                                className="grow text-secondary font-medium text-xl hover:bg-primary/90 hover:[&_a]:underline p-2"
+                                onClick={() => setOpen(false)} // <<<<< fermer au clic
+                            >
+                                <NavLink to={link.href}>{link.label}</NavLink>
+                            </div>
+                        ))}
                 </Content>
             </DropdownMenu>
             <Spacer />
@@ -318,10 +324,10 @@ export default function Header({ links }: { links: NavLinkType[] }) {
                 <Spacer />
                 <section className="inline-flex items-center justify-end w-1/2 gap-5">
                     <AuthSection Icon={<UserIcon size={ICON_SIZE} />} />
-                    <CartSection title="Votre panier" Icon={<ShoppingCartIcon size={ICON_SIZE} />} />
-                    <a href="/contact">
+                    {/* <CartSection title="Votre panier" Icon={<ShoppingCartIcon size={ICON_SIZE} />} /> */}
+                    <NavLink to={"/contact"}>
                         <Button>Contact</Button>
-                    </a>
+                    </NavLink>
                 </section>
             </div>
         </header>
