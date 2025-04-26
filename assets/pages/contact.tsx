@@ -1,12 +1,15 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useAuth } from "../hooks/auth-context";
 import CommunFaq from "../components/CommunFaq";
 import { Hero } from "../components/Hero";
 import { Input } from "../components/Input";
 import { Button } from "../components/ui/button";
-import { Select as RadixSelect, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { Textarea } from "../components/ui/textarea";
+import SelectContactType from "../components/SelectContactType";
 
 export default function Page() {
+    const { user } = useAuth();
+
     return (
         <>
             <Hero title="Formulaire de contact" img={{ src: "/build/images/contact/hero.png", alt: "banniere" }} />
@@ -18,15 +21,45 @@ export default function Page() {
             <section className="space-y-10 w-full px-20">
                 <h3 className="text-secondary text-3xl font-semibold">Nous contacter</h3>
                 <form className="flex flex-col justify-between gap-10 [&_label]:max-w-none">
-                    <Select />
-                    <div className="w-full grid grid-cols-2 justify-items-center gap-10 ">
-                        <Input placeholder="Votre nom.." name="name" htmlFor="name" type="text" />
-                        <Input placeholder="Votre prénom.." name="firstname" htmlFor="firstname" type="text" />
+                    <SelectContactType />
+                    <div className="w-full grid grid-cols-2 justify-items-center gap-10">
+                        <Input
+                            placeholder="Votre nom.."
+                            name="name"
+                            htmlFor="name"
+                            type="text"
+                            value={user?.lastName || ""}
+                            disabled={!!user}
+                        />
+                        <Input
+                            placeholder="Votre prénom.."
+                            name="firstname"
+                            htmlFor="firstname"
+                            type="text"
+                            value={user?.firstName || ""}
+                            disabled={!!user}
+                        />
                     </div>
+
                     <div className="flex flex-col gap-10">
-                        <Input placeholder="Votre entreprise.." name="company" htmlFor="company" type="text" />
-                        <Input placeholder="Votre email.." name="email" htmlFor="email" type="email" />
+                        <Input
+                            placeholder="Votre entreprise.."
+                            name="company"
+                            htmlFor="company"
+                            type="text"
+                            value={user?.company || ""}
+                            disabled={!!user}
+                        />
+                        <Input
+                            placeholder="Votre email.."
+                            name="email"
+                            htmlFor="email"
+                            type="email"
+                            value={user?.email || ""}
+                            disabled={!!user}
+                        />
                     </div>
+
                     <Textarea name="message" id="message" placeholder="Votre message.." />
                     <div className="w-full grid justify-items-center">
                         <Button className="bg-dark-secondary text-white py-2 px-6 rounded-3xl w-fit border">
@@ -63,24 +96,3 @@ export default function Page() {
         </>
     );
 }
-
-const Select = () => {
-    return (
-        <RadixSelect>
-            <SelectTrigger className="w-[225px] rounded-full bg-grey text-white border-none">
-                <SelectValue placeholder="Veuillez sélectionner" />
-            </SelectTrigger>
-            <SelectContent className="bg-grey text-white">
-                <SelectItem className="hover:bg-stone-400 rounded-lg" value="option-1">
-                    Option 1
-                </SelectItem>
-                <SelectItem className="hover:bg-stone-400 rounded-lg" value="option-2">
-                    Option 2
-                </SelectItem>
-                <SelectItem className="hover:bg-stone-400 rounded-lg" value="option-3">
-                    Option 3
-                </SelectItem>
-            </SelectContent>
-        </RadixSelect>
-    );
-};
