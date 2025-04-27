@@ -34,8 +34,8 @@ class UserController extends AbstractController
             'isVerified' => $user->isVerified(),
             'isAnonymous' => $user->isAnonymous(),
             'roles' => $user->getRoles(),
-            'createdAt' => $user->getCreatedAt(),
-            'updatedAt' => $user->getUpdatedAt()
+            'createdAt' => $user->getCreatedAt()->format('Y-m-d H:i:s'),
+            'updatedAt' => $user->getUpdatedAt()->format('Y-m-d H:i:s') ?? null,
         ], 200);
     }
 
@@ -45,23 +45,23 @@ class UserController extends AbstractController
     {
         $users = $entityManager->getRepository(\App\Entity\User::class)->findAll();
 
-        $userData = [];
         foreach ($users as $user) {
-            $userData[] = [
+            $userList[] = [
+                'id' => $user->getId(),
                 'email' => $user->getEmail(),
-                'lastName' => $user->getLastName(),
                 'firstName' => $user->getFirstName(),
+                'lastName' => $user->getLastName(),
                 'company' => $user->getCompany(),
                 'newsletterOptin' => $user->isNewsletterOptin(),
                 'isVerified' => $user->isVerified(),
                 'isAnonymous' => $user->isAnonymous(),
                 'roles' => $user->getRoles(),
-                'createdAt' => $user->getCreatedAt(),
-                'updatedAt' => $user->getUpdatedAt()
+                'createdAt' => $user->getCreatedAt()?->format('Y-m-d H:i:s'),
+                'updatedAt' => $user->getUpdatedAt()?->format('Y-m-d H:i:s') ?? null,
             ];
         }
 
-        return StandardJsonResponse::success('Utilisateurs récupérés', $userData, 200);
+        return StandardJsonResponse::success('Utilisateurs récupérés', $userList, 200);
     }
 
     #[Route('/update', name: 'update', methods: ['PUT'])]
