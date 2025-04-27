@@ -68,9 +68,9 @@ export default function Page() {
 
             <form
                 onSubmit={handleSubmit}
-                className="bg-white rounded-lg shadow-lg p-8 flex flex-col items-center gap-6 w-full max-w-md">
+                className="bg-primary rounded-lg shadow-lg p-8 flex flex-col items-center gap-6 w-full max-w-md">
                 {/* Petit avatar rond avec initiales */}
-                <div className="bg-primary text-white rounded-full w-20 h-20 flex items-center justify-center text-2xl font-bold">
+                <div className="bg-white text-primary rounded-full w-20 h-20 flex items-center justify-center text-2xl font-bold">
                     {(user.firstName?.[0] || "?") + (user.lastName?.[0] || "")}
                 </div>
 
@@ -108,21 +108,23 @@ export default function Page() {
                     <div className="flex flex-col gap-1">
                         <label className="text-sm font-semibold text-gray-500">S'abonner à la newsletter :</label>
                         <div className="flex items-center gap-4">
-                            <label className="flex items-center gap-2">
+                            <label className="flex items-center gap-2 cursor-pointer">
                                 <input
                                     type="radio"
                                     name="newsletterOptin"
                                     value="true"
+                                    className="cursor-pointer"
                                     checked={formData.newsletterOptin === true}
                                     onChange={() => setFormData((prev) => ({ ...prev, newsletterOptin: true }))}
                                 />
                                 Oui
                             </label>
-                            <label className="flex items-center gap-2">
+                            <label className="flex items-center gap-2 cursor-pointer">
                                 <input
                                     type="radio"
                                     name="newsletterOptin"
                                     value="false"
+                                    className="cursor-pointer"
                                     checked={formData.newsletterOptin === false}
                                     onChange={() => setFormData((prev) => ({ ...prev, newsletterOptin: false }))}
                                 />
