@@ -39,6 +39,31 @@ class UserController extends AbstractController
         ], 200);
     }
 
+    #[Route('/get-all', name: 'get_all', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function getAll(EntityManagerInterface $entityManager): JsonResponse
+    {
+        $users = $entityManager->getRepository(\App\Entity\User::class)->findAll();
+
+        $userData = [];
+        foreach ($users as $user) {
+            $userData[] = [
+                'email' => $user->getEmail(),
+                'lastName' => $user->getLastName(),
+                'firstName' => $user->getFirstName(),
+                'company' => $user->getCompany(),
+                'newsletterOptin' => $user->isNewsletterOptin(),
+                'isVerified' => $user->isVerified(),
+                'isAnonymous' => $user->isAnonymous(),
+                'roles' => $user->getRoles(),
+                'createdAt' => $user->getCreatedAt(),
+                'updatedAt' => $user->getUpdatedAt()
+            ];
+        }
+
+        return StandardJsonResponse::success('Utilisateurs récupérés', $userData, 200);
+    }
+
     #[Route('/update', name: 'update', methods: ['PUT'])]
     #[IsGranted('ROLE_USER')]
     public function update(Request $request, EntityManagerInterface $entityManager, ValidatorInterface $validator): JsonResponse
