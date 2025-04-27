@@ -45,7 +45,7 @@ export default function AdminPage() {
 
     return (
         <div className="p-10">
-            <h1 className="text-3xl text-primary mb-8">Administration</h1>
+            <h1 className="text-3xl text-secondary mb-8 mt-20">Administration</h1>
 
             {/* BOUTONS */}
             <div className="flex gap-6 mb-10">
