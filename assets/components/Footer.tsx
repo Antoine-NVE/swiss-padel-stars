@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { cn } from "../utils";
 import { useAuth } from "../hooks/auth-context";
+import { cn } from "../utils";
 import { Input } from "./Input";
 import Logo from "./Logo";
 import { Button } from "./ui/button";
@@ -52,48 +52,50 @@ export default function Footer() {
     }, [user]);
 
     return (
-        <footer className="bg-primary text-white py-8 px-20 space-y-12">
-            <section className="flex justify-between items-start">
+        <footer className="bg-primary text-white py-8 px-4 lg:px-20 space-y-12">
+            <section className="flex flex-col sm:flex-row justify-center items-center flex-wrap sm:justify-between sm:items-start gap-3">
                 <div className="flex h-28 items-center justify-center">
                     <Logo className="h-12" />
                 </div>
-
-                <div className="max-w-[35%] space-y-3">
-                    <p>Inscrivez-vous à notre newsletter</p>
-                    <form onSubmit={handleNewsletterSubmit} className="flex flex-col gap-4">
-                        <div className="flex gap-4 items-center">
-                            <Input
-                                name="email"
-                                htmlFor="newsletter-email"
-                                placeholder="Votre adresse email.."
-                                type="email"
-                                value={formEmail}
-                                onChange={(e) => setFormEmail(e.target.value)}
-                                disabled={!!user}
-                            />
-                            <Button type="submit" disabled={loading}>
-                                {user?.newsletterOptin ? "Se désinscrire" : "S'abonner"}
-                            </Button>
-                        </div>
-
-                        {/* Erreur sous l'input */}
-                        {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
-                    </form>
-                    <small className="text-xs block leading-3">
-                        En vous abonnant, vous acceptez notre Politique de Confidentialité et consentez à recevoir des
-                        mises à jour.
-                    </small>
-                </div>
-
-                <div className="space-y-3">
-                    <p>Suivez-nous sur les réseaux</p>
-                    <div className="flex items-center gap-5">
-                        <Instagram width={43} height={43} />
-                        <p>Instagram</p>
+                <div className="flex sm:contents gap-6 flex-wrap">
+                    <div className="sm:max-w-[35%] space-y-3">
+                        <p>Inscrivez-vous à notre newsletter</p>
+                        <form onSubmit={handleNewsletterSubmit} className="flex flex-col gap-2">
+                            <div className="flex gap-2 items-center flex-wrap [&_label]:max-w-[250px]">
+                                <Input
+                                    name="email"
+                                    htmlFor="newsletter-email"
+                                    placeholder="Votre adresse email.."
+                                    type="email"
+                                    value={formEmail}
+                                    onChange={(e) => setFormEmail(e.target.value)}
+                                    disabled={!!user}
+                                />
+                                <Button type="submit" disabled={loading}>
+                                    {user?.newsletterOptin ? "Se désinscrire" : "S'abonner"}
+                                </Button>
+                            </div>
+                            {/* Erreur sous l'input */}
+                            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+                        </form>
+                        <small className="text-xs block leading-3">
+                            En vous abonnant, vous acceptez notre Politique de Confidentialité et consentez à recevoir
+                            des mises à jour.
+                        </small>
                     </div>
-                    <div className="flex items-center gap-5">
-                        <Linkedin width={43} height={43} />
-                        <p>Linkedin</p>
+
+                    <Separator className="sm:hidden" />
+
+                    <div className="space-y-3">
+                        <p>Suivez-nous sur les réseaux</p>
+                        <div className="flex items-center gap-5">
+                            <Instagram width={38} height={38} />
+                            <p>Instagram</p>
+                        </div>
+                        <div className="flex items-center gap-5">
+                            <Linkedin width={38} height={38} />
+                            <p>Linkedin</p>
+                        </div>
                     </div>
                 </div>
             </section>
