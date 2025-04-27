@@ -34,14 +34,14 @@ const defaultFaq: FaqType[] = [
 
 export default function CommunFaq({ faq = defaultFaq }: { faq?: FaqType[] }) {
     return (
-        <section className="flex flex-col items-start px-36 py-8 space-y-6 bg-primary/20  text-white">
+        <section className="flex flex-col items-start px-4 sm:px-16 lg:px-36 py-8 space-y-6 bg-primary/20  text-white">
             <p className="text-white">
                 Découvrez les réponses aux questions fréquentes concernant nos services et événements de padel.
             </p>
             <Accordion type="single" collapsible className="w-full space-y-3">
                 {faq.map((item) => (
                     <AccordionItem key={item.id} value={item.id} className="bg-grey rounded-lg border-0 px-4">
-                        <AccordionTrigger>{item.question}</AccordionTrigger>
+                        <AccordionTrigger className="text-lg">{item.question}</AccordionTrigger>
                         <AccordionContent>{item.answer}</AccordionContent>
                     </AccordionItem>
                 ))}
