@@ -16,7 +16,7 @@ import {
 } from "./ui/dropdown";
 import Spacer from "./ui/spacer";
 
-const ICON_SIZE = 38;
+const ICON_SIZE = 32;
 const endpoints = {
     register: "/api/auth/register",
     login: "/api/auth/login",
@@ -56,7 +56,7 @@ const Nav = ({ links }: { links: NavLinkType[] }) => {
                 </Content>
             </DropdownMenu>
             <Spacer />
-            <Logo className="translate-x-[100%]" />
+            <Logo className="sm:translate-x-[100%]" />
         </nav>
     );
 };
@@ -358,11 +358,11 @@ export default function Header({ links }: { links: NavLinkType[] }) {
     const { user } = useAuth(); // Récupère l'utilisateur
 
     return (
-        <header className="absolute flex items-center justify-around w-screen bg-primary/90 py-4 px-4 z-50 h-24">
+        <header className="absolute flex items-center justify-around w-screen bg-primary/90 py-4 px-4 z-50 h-16 md:h-20 lg:h-24">
             <div className="w-full flex justify-between items-center">
                 <Nav links={links} />
                 <Spacer />
-                <section className="inline-flex items-center justify-end w-1/2 gap-5">
+                <section className="inline-flex items-center justify-end w-1/2 gap-1 sm:gap-5">
                     {/* Si l'utilisateur est admin, on affiche l'icône */}
                     {user?.roles.includes("ROLE_ADMIN") && (
                         <NavLink to="/admin" title="Accéder à l'administration">
