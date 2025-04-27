@@ -64,6 +64,9 @@
     body {
         @apply font-sans antialiased overflow-x-hidden;
     }
+    p {
+        font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+    }
 }
 
 @layer utilities {

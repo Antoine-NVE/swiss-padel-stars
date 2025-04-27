@@ -36,7 +36,7 @@ export const Article = ({ img, btn, description, subTitle, title, direction, chi
         <article
             ref={articleRef}
             className={cn(
-                "flex center justify-around [&_.wrapper]:w-[500px]",
+                "flex center flex-wrap gap-3 justify-around [&_.wrapper]:w-[500px] px-2 lg:px-0",
                 direction === "ltr" && "flex-row-reverse"
             )}>
             <div
@@ -48,7 +48,7 @@ export const Article = ({ img, btn, description, subTitle, title, direction, chi
             </div>
             <div
                 className={cn(
-                    "wrapper flex flex-col items-center justify-around",
+                    "wrapper flex flex-col items-center justify-around gap-3",
                     "transition-all duration-700 ease-out delay-200",
                     isVisible ? "opacity-100 translate-x-0" : `opacity-0 ${textDirection}`
                 )}>
@@ -64,7 +64,7 @@ export const Article = ({ img, btn, description, subTitle, title, direction, chi
                 )}
                 {description && (
                     /* Si une description est fourni */
-                    <p className="w-full text-white text-3xl text-balance text-justify">{description}</p>
+                    <p className="w-full text-white lg:text-3xl text-balance text-justify">{description}</p>
                 )}
                 {btn && /* Si un texte de bouton est fourni */ btn}
                 {children}
