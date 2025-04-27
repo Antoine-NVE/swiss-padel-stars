@@ -78,6 +78,8 @@ class UserController extends AbstractController
             return StandardJsonResponse::error('Une erreur est survenue.', $errorMessages, 400);
         }
 
+        $user->setUpdatedAt(new \DateTimeImmutable());
+
         $entityManager->flush();
 
         return StandardJsonResponse::success('Utilisateur mis à jour', [
