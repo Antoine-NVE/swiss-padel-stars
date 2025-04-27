@@ -1,8 +1,8 @@
 import React from "react";
+import { NavLink } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { FaqType } from "../types";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./ui/accordion";
-import { NavLink } from "react-router-dom";
 
 const defaultFaq: FaqType[] = [
     {
@@ -41,7 +41,7 @@ export default function CommunFaq({ faq = defaultFaq }: { faq?: FaqType[] }) {
             <Accordion type="single" collapsible className="w-full space-y-3">
                 {faq.map((item) => (
                     <AccordionItem key={item.id} value={item.id} className="bg-grey rounded-lg border-0 px-4">
-                        <AccordionTrigger className="text-lg">{item.question}</AccordionTrigger>
+                        <AccordionTrigger className="font-sans">{item.question}</AccordionTrigger>
                         <AccordionContent>{item.answer}</AccordionContent>
                     </AccordionItem>
                 ))}
