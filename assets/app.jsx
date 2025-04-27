@@ -2,6 +2,7 @@
 import Accueil from "./pages/index.tsx";
 import Nous from "./pages/nous.tsx";
 import Contact from "./pages/contact.tsx";
+import Admin from "./pages/admin.tsx";
 import Infrastructure from "./pages/infrastructure.tsx";
 import Partenariat from "./pages/partenariat.tsx";
 import Produits from "./pages/produits.tsx";
@@ -67,6 +68,13 @@ const links = [
         available: true,
         navbar: false,
     },
+    {
+        label : 'Admin',
+        href : 'admin',
+        Page : Admin,
+        available : true,
+        navbar : false,
+    }
 ];
 
 const rootElement = document.getElementById("root");

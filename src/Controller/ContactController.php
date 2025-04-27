@@ -107,6 +107,31 @@ class ContactController extends AbstractController
         return StandardJsonResponse::success('Votre message a bien été envoyé', null, 200);
     }
 
+    #[Route('/get-all', name: 'all', methods: ['GET'])]
+    public function getAllContacts(EntityManagerInterface $entityManager): JsonResponse
+    {
+        $contacts = $entityManager->getRepository(Contact::class)->findAll();
+        $contactList = [];
+
+        foreach ($contacts as $contact) {
+            $contactList[] = [
+                'id' => $contact->getId(),
+                'user' => [
+                    'id' => $contact->getUser()->getId(),
+                    'email' => $contact->getUser()->getEmail(),
+                    'firstName' => $contact->getUser()->getFirstName(),
+                    'lastName' => $contact->getUser()->getLastName(),
+                    'company' => $contact->getUser()->getCompany(),
+                ],
+                'contactType' => $contact->getContactType() ? $contact->getContactType()->getType() : null,
+                'message' => $contact->getMessage(),
+                'createdAt' => $contact->getCreatedAt()->format('Y-m-d H:i:s'),
+            ];
+        }
+
+        return StandardJsonResponse::success('Liste des contacts', $contactList, 200);
+    }
+
     #[Route('/types', name: 'types', methods: ['GET'])]
     public function types(ContactTypeRepository $contactTypeRepository): JsonResponse
     {
