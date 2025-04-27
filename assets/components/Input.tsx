@@ -46,28 +46,3 @@ export const Input = ({
         </label>
     );
 };
-
-// const Input = ({
-//     name,
-//     htmlFor,
-//     placeholder,
-//     type,
-// }: {
-//     name: string;
-//     htmlFor: string;
-//     placeholder: string;
-//     type: string;
-// }) => {
-//     return (
-//         <label htmlFor={htmlFor} className="relative w-full max-w-[90%]">
-//             <RadixInput
-//                 type={type}
-//                 name={name}
-//                 id={htmlFor}
-//                 placeholder={placeholder}
-//                 className="bg-white text-black placeholder:text-black rounded-full h-8"
-//             />
-//             <PlusIcon size={16} className="text-black rotate-45 absolute top-1/2 right-2 transform -translate-y-1/2" />
-//         </label>
-//     );
-// };
