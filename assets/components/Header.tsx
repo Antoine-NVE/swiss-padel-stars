@@ -1,4 +1,4 @@
-import { MenuIcon, ShoppingCartIcon, UserIcon } from "lucide-react";
+import { MenuIcon, ShieldCheckIcon, ShoppingCartIcon, UserIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/auth-context";
@@ -355,15 +355,26 @@ const CartSection = ({ title, Icon }: { title: string; Icon: React.ReactNode }) 
  * MAIN COMPONENT HEADER
  */
 export default function Header({ links }: { links: NavLinkType[] }) {
+    const { user } = useAuth(); // Récupère l'utilisateur
+
     return (
         <header className="absolute flex items-center justify-around w-screen bg-primary/90 py-4 px-4 z-50 h-24">
             <div className="w-full flex justify-between items-center">
                 <Nav links={links} />
                 <Spacer />
                 <section className="inline-flex items-center justify-end w-1/2 gap-5">
+                    {/* Si l'utilisateur est admin, on affiche l'icône */}
+                    {user?.roles.includes("ROLE_ADMIN") && (
+                        <NavLink to="/admin" title="Accéder à l'administration">
+                            <Button variant="ghost" size="icon">
+                                <ShieldCheckIcon size={ICON_SIZE} />
+                            </Button>
+                        </NavLink>
+                    )}
+
                     <AuthSection Icon={<UserIcon size={ICON_SIZE} />} />
                     {/* <CartSection title="Votre panier" Icon={<ShoppingCartIcon size={ICON_SIZE} />} /> */}
-                    <NavLink to={"/contact"}>
+                    <NavLink to="/contact">
                         <Button>Contact</Button>
                     </NavLink>
                 </section>
