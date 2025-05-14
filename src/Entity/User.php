@@ -91,6 +91,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->userAddresses = new ArrayCollection();
 
         $this->createdAt = new DateTimeImmutable();
+        $this->updatedAt = new DateTimeImmutable();
         $this->isVerified = false;
         $this->newsletterOptin = false;
         $this->isAnonymous = false;
