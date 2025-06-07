@@ -51,9 +51,7 @@ export default function Page() {
 
             <Split smImg={splitImgs.sm} bgImg={splitImgs.bg} direction="ltr">
                 <p className="text-white text-3xl text-balance text-justify max-w-[40%]">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Labore perspiciatis magnam beatae deserunt
-                    voluptate reprehenderit ea reiciendis laudantium dolorum. Lorem ipsum, dolor sit amet consectetur
-                    adipisicing elit.
+                    Proches des instances nationales, nous sommes au fait des dernières avancées, des tendances du marché et des enjeux à venir – pour offrir à nos partenaires une vision claire, des conseils avisés et des solutions concrètes dans un écosystème en pleine évolution.
                 </p>
             </Split>
 
